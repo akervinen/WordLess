@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class WordLessApplication
 
 fun main(args: Array<String>) {
-	runApplication<WordLessApplication>(*args)
+    runApplication<WordLessApplication>(*args)
 }
