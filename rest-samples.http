@@ -1,0 +1,8 @@
+### Get all posts
+GET http://localhost:8080/api/posts
+
+### Get one post
+GET http://localhost:8080/api/posts/1
+
+### Get non-existing post
+GET http://localhost:8080/api/posts/0
