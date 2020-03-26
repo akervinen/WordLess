@@ -1,5 +1,5 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import {BrowserRouter as Router, Route, Switch, useParams} from 'react-router-dom';
+import {BrowserRouter as Router, Link, Route, Switch, useParams} from 'react-router-dom';
 import './App.css';
 
 function PostHeader(props) {
@@ -7,7 +7,7 @@ function PostHeader(props) {
   return (
     <header>
       <h1>
-        <a href={`/posts/${post.id}/${post.slug}`}>{post.title}</a>
+        <Link to={`/posts/${post.id}/${post.slug}`}>{post.title}</Link>
       </h1>
       <p className="meta">
         <time dateTime={post.postedTime}>{new Date(post.postedTime).toLocaleString()}</time>
@@ -25,9 +25,13 @@ function PostSummary(props) {
     </div>
 
     <footer>
-      <a href={`/posts/${post.id}/${post.slug}`}>Read More...</a>
+      <Link to={`/posts/${post.id}/${post.slug}`}>Read More...</Link>
     </footer>
   </article>);
+}
+
+function PostNotFound() {
+  return (<h1>Post Not Found</h1>);
 }
 
 function Post() {
@@ -37,17 +41,18 @@ function Post() {
   useEffect(() => {
     (async function fetchData() {
       const result = await fetch(`/api/posts/${id}`);
-      const json = await result.json();
-      setPost(json);
+      setPost(result.ok ? await result.json() : null);
     })();
-  }, []);
+  }, [id]);
 
   return (
     <article>
-      <PostHeader post={post}/>
+      {post !== null && <PostHeader post={post}/>}
 
       <div className="content">
-        {post.content}
+        {post !== null ?
+          post.content
+          : <PostNotFound/>}
       </div>
     </article>);
 }
@@ -58,15 +63,14 @@ function PostList() {
   useEffect(() => {
     (async function fetchData() {
       const result = await fetch('/api/posts');
-      const json = await result.json();
-      setPosts(json);
+      setPosts(await result.json());
     })();
   }, []);
 
   return (
     <Fragment>
       {posts.map(item => (
-        <PostSummary post={item}/>)
+        <PostSummary key={item.id} post={item}/>)
       )}
     </Fragment>);
 }
@@ -75,7 +79,7 @@ function App() {
   return (
     <Router>
       <header>
-        <h1>Spaghetti Forever</h1>
+        <h1><Link to="/">Spaghetti Forever</Link></h1>
       </header>
 
       <main>
