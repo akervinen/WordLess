@@ -5,6 +5,7 @@ import org.jdbi.v3.core.kotlin.mapTo
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.Bean
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 import org.springframework.util.FileCopyUtils
@@ -33,6 +34,11 @@ class WordLessApplication constructor(private val jdbi: Jdbi) : CommandLineRunne
         return InputStreamReader(resource.inputStream, UTF_8).use { reader ->
             FileCopyUtils.copyToString(reader)
         }
+    }
+
+    @Bean
+    fun getPostDao(jdbi: Jdbi): PostDao {
+        return jdbi.onDemand(PostDao::class.java)
     }
 }
 
