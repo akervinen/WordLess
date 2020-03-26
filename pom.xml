@@ -10,7 +10,7 @@
     </parent>
     <groupId>me.aleksi</groupId>
     <artifactId>wordless</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <name>WordLess</name>
     <description>Some kind of blogging platform</description>
 
