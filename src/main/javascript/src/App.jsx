@@ -37,16 +37,22 @@ function PostNotFound() {
 function Post(props) {
   const {onDelete, history} = props;
   const {id} = useParams();
-  const [post, setPost] = useState({});
+  const [state, setState] = useState({loading: true, post: null});
 
   useEffect(() => {
     (async function fetchData() {
       const result = await fetch(`/api/posts/${id}`);
-      setPost(result.ok ? await result.json() : null);
+      setState({
+        loading: false,
+        post: (result.ok ? await result.json() : null)
+      });
     })();
   }, [id]);
 
-  if (post === null) {
+  if (state.loading)
+    return null;
+
+  if (state.post === null) {
     return <article>
       <div className="content">
         <PostNotFound/>
@@ -56,10 +62,10 @@ function Post(props) {
 
   return (
     <article>
-      <PostHeader post={post}/>
+      <PostHeader post={state.post}/>
 
       <div className="content">
-        {post.content}
+        {state.post.content}
       </div>
 
       <footer>
@@ -69,21 +75,24 @@ function Post(props) {
 }
 
 function PostList() {
-  const [posts, setPosts] = useState([]);
+  const [state, setState] = useState({loading: true, posts: []});
 
   useEffect(() => {
     (async function fetchData() {
       const result = await fetch('/api/posts');
-      setPosts(await result.json());
+      setState({loading: false, posts: await result.json()});
     })();
   }, []);
 
-  if (posts.length === 0)
+  if (state.loading)
+    return null;
+
+  if (state.posts.length === 0)
     return <h2>No Posts Yet</h2>;
 
   return (
     <Fragment>
-      {posts.map(item => (
+      {state.posts.map(item => (
         <PostSummary key={item.id} post={item}/>)
       )}
     </Fragment>);
