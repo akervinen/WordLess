@@ -4,7 +4,7 @@ import org.jdbi.v3.sqlobject.customizer.Bind
 import org.jdbi.v3.sqlobject.statement.SqlQuery
 
 interface PostDao {
-    @SqlQuery("""select * from "post"""")
+    @SqlQuery("""select * from "post" order by "posted_time" desc""")
     fun getAllPosts(): List<Post>
 
     @SqlQuery("""select * from "post" where "id"=(:id)""")
