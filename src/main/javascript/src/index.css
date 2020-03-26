@@ -12,6 +12,7 @@ article {
 
 article > header {
     display: flex;
+    flex-wrap: wrap-reverse;
 }
 
 article > header h1 {

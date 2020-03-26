@@ -1,7 +1,6 @@
 package me.aleksi.wordless
 
 import org.jdbi.v3.core.Jdbi
-import org.jdbi.v3.core.kotlin.mapTo
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -17,6 +16,11 @@ class WordLessApplication constructor(private val jdbi: Jdbi) : CommandLineRunne
     override fun run(vararg args: String?) {
         println("Team: Spaghetti Forever")
         println("\tMember: Aleksi Kervinen")
+        println()
+
+        val curlSample = getStringFromResource(ClassPathResource("/curl-samples.txt"))
+        println("curl samples:")
+        println(curlSample)
 
         val createScript = getStringFromResource(ClassPathResource("/db/create.sql"))
         val seedScript = getStringFromResource(ClassPathResource("/db/seed.sql"))
@@ -24,9 +28,6 @@ class WordLessApplication constructor(private val jdbi: Jdbi) : CommandLineRunne
         jdbi.useHandle<Exception> { handle ->
             handle.createScript(createScript).execute()
             handle.createScript(seedScript).execute()
-
-            println(handle.createQuery("""select "id" from "post"""").mapTo<Int>().toList())
-            println(handle.createQuery("""select "title" from "post"""").mapTo<String>().toList())
         }
     }
 

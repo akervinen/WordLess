@@ -34,7 +34,8 @@ function PostNotFound() {
   return (<h1>Post Not Found</h1>);
 }
 
-function Post() {
+function Post(props) {
+  const {onDelete, history} = props;
   const {id} = useParams();
   const [post, setPost] = useState({});
 
@@ -45,15 +46,25 @@ function Post() {
     })();
   }, [id]);
 
+  if (post === null) {
+    return <article>
+      <div className="content">
+        <PostNotFound/>
+      </div>
+    </article>;
+  }
+
   return (
     <article>
-      {post !== null && <PostHeader post={post}/>}
+      <PostHeader post={post}/>
 
       <div className="content">
-        {post !== null ?
-          post.content
-          : <PostNotFound/>}
+        {post.content}
       </div>
+
+      <footer>
+        <button onClick={onDelete.bind(null, id, history)}>Delete</button>
+      </footer>
     </article>);
 }
 
@@ -67,12 +78,20 @@ function PostList() {
     })();
   }, []);
 
+  if (posts.length === 0)
+    return <h2>No Posts Yet</h2>;
+
   return (
     <Fragment>
       {posts.map(item => (
         <PostSummary key={item.id} post={item}/>)
       )}
     </Fragment>);
+}
+
+async function deletePost(id, history) {
+  await fetch(`/api/posts/${id}`, {method: 'DELETE'});
+  history.replace('/');
 }
 
 function App() {
@@ -84,7 +103,7 @@ function App() {
 
       <main>
         <Switch>
-          <Route path="/posts/:id" children={<Post/>}/>
+          <Route path="/posts/:id" render={props => <Post onDelete={deletePost} {...props}/>}/>
           <Route path="/">
             <PostList/>
           </Route>

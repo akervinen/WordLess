@@ -1,0 +1,8 @@
+### Get all posts
+curl http://localhost:8080/api/posts
+
+### Get one post
+curl http://localhost:8080/api/posts/1
+
+### Delete post
+curl -X DELETE http://localhost:8080/api/posts/1
