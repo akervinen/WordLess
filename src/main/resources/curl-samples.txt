@@ -1,6 +1,9 @@
 ### Get all posts
 curl http://localhost:8080/api/posts
 
+### Search posts with query
+curl http://localhost:8080/api/posts?query=hello
+
 ### Get one post
 curl http://localhost:8080/api/posts/1
 
