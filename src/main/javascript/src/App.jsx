@@ -1,21 +1,9 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import {BrowserRouter as Router, Link, Route, Switch, useParams} from 'react-router-dom';
 import './App.css';
-import Sidebar from "./Sidebar";
-
-function PostHeader(props) {
-  const {post} = props;
-  const posted = new Date(post.postedTime);
-  return (
-    <header>
-      <h2>
-        <Link to={`/posts/${post.id}/${post.slug}`}>{post.title}</Link>
-      </h2>
-      <p className="meta">
-        <time dateTime={posted.toISOString()}>{posted.toLocaleString()}</time>
-      </p>
-    </header>);
-}
+import Sidebar from './Sidebar';
+import PostForm from './PostForm';
+import {Post, PostHeader} from './Post';
 
 function PostSummary(props) {
   const {post} = props;
@@ -30,51 +18,6 @@ function PostSummary(props) {
       <Link to={`/posts/${post.id}/${post.slug}`}>Read More...</Link>
     </footer>
   </article>);
-}
-
-function PostNotFound() {
-  return (<h1>Post Not Found</h1>);
-}
-
-function Post() {
-  const {id} = useParams();
-  const [state, setState] = useState({loading: true, post: null});
-
-  useEffect(() => {
-    (async function fetchData() {
-      const result = await fetch(`/api/posts/${id}`);
-      setState({
-        loading: false,
-        post: (result.ok ? await result.json() : null)
-      });
-    })();
-  }, [id]);
-
-  if (state.loading)
-    return <article>
-      <div className="content">
-      </div>
-    </article>;
-
-  if (state.post === null) {
-    return <article>
-      <div className="content">
-        <PostNotFound/>
-      </div>
-    </article>;
-  }
-
-  return (
-    <article>
-      <PostHeader post={state.post}/>
-
-      <div className="content">
-        {state.post.content}
-      </div>
-
-      <footer>
-      </footer>
-    </article>);
 }
 
 function PostList() {
@@ -98,84 +41,6 @@ function PostList() {
       {state.posts.map(item => (
         <PostSummary key={item.id} post={item}/>)
       )}
-    </Fragment>);
-}
-
-function PostForm(props) {
-  const {id} = useParams();
-  const {onSubmit, history} = props;
-  const [state, setState] = useState({
-    title: "",
-    public: true,
-    summary: "",
-    content: ""
-  });
-
-  useEffect(() => {
-    if (!id) return;
-    (async function fetchData() {
-      const result = await fetch(`/api/posts/${id}`);
-      const data = result.ok ? await result.json() : {};
-      setState((prevState => {
-        return {
-          ...prevState,
-          ...data
-        }
-      }));
-    })();
-  }, [id]);
-
-  const onChange = function onChange(evt) {
-    const target = evt.target;
-    const value = target.name === 'public' ? target.checked : target.value;
-    const name = target.name;
-    setState((prevState => {
-      return {
-        ...prevState,
-        [name]: value
-      }
-    }));
-  };
-
-  return (
-    <Fragment>
-      <h1>{!id ? "New Post" : "Edit Post"}</h1>
-      <form id="postForm" onSubmit={onSubmit.bind(null, state, history)}>
-        <label>
-          Title:
-          <input name="title"
-                 type="text"
-                 placeholder="Enter title here"
-                 value={state.title}
-                 onChange={onChange}
-                 required
-                 maxLength={200}/>
-        </label>
-        <label id="publicLabel">
-          Public:
-          <input name="public"
-                 type="checkbox"
-                 checked={state['public']}
-                 onChange={onChange}/>
-        </label>
-        <label>
-          Summary:
-          <textarea name="summary"
-                    placeholder="Enter post summary here"
-                    required
-                    value={state.summary}
-                    onChange={onChange}/>
-        </label>
-        <label>
-          Content:
-          <textarea name="content"
-                    placeholder="Enter post content here"
-                    required
-                    value={state.content}
-                    onChange={onChange}/>
-        </label>
-        <input type="submit" value={!id ? 'Create' : 'Edit'}/>
-      </form>
     </Fragment>);
 }
 
