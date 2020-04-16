@@ -4,13 +4,14 @@ import './App.css';
 
 function PostHeader(props) {
   const {post} = props;
+  const posted = new Date(post.postedTime);
   return (
     <header>
-      <h1>
+      <h2>
         <Link to={`/posts/${post.id}/${post.slug}`}>{post.title}</Link>
-      </h1>
+      </h2>
       <p className="meta">
-        <time dateTime={post.postedTime}>{new Date(post.postedTime).toLocaleString()}</time>
+        <time dateTime={posted.toISOString()}>{posted.toLocaleString()}</time>
       </p>
     </header>);
 }
