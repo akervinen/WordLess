@@ -1,5 +1,10 @@
 #sidebar {
     flex: 0 1 auto;
-    margin-left: 1em;
+
+    padding: 1em .5em;
     width: 10em;
+
+    border-left: 1px solid #282c34;
+    background-color: sandybrown;
+    color: black;
 }

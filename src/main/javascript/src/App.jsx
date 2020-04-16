@@ -251,16 +251,25 @@ function App() {
           </Switch>
         </main>
 
-        <Sidebar>
-          <Switch>
-            <Route exact path="/posts/new"/>
-            <Route path="/posts/:id" render={props => <PostControls onDelete={deletePost} {...props}/>}/>
-            <Route path="/">
-              <Link to="/posts/new">New Post</Link>
-            </Route>
-          </Switch>
-        </Sidebar>
+        <Switch>
+          <Route exact path="/posts/new"/>
+          <Route path="/">
+            <Sidebar>
+              <Switch>
+                <Route exact path="/posts/new"/>
+                <Route path="/posts/:id" render={props => <PostControls onDelete={deletePost} {...props}/>}/>
+                <Route path="/">
+                  <Link to="/posts/new">New Post</Link>
+                </Route>
+              </Switch>
+            </Sidebar>
+          </Route>
+        </Switch>
       </div>
+
+      <footer>
+        © Aleksi Kervinen 2020
+      </footer>
     </Router>
   );
 }
