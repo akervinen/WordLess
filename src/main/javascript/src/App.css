@@ -8,8 +8,8 @@ body {
 
     box-sizing: border-box;
 
-    background-color: #282c34;
-    color: white;
+    background-color: #282d29;
+    color: whitesmoke;
 }
 
 h1 a, h1 a:visited, h2 a, h2 a:visited {
@@ -24,10 +24,10 @@ a:hover, h1 a:hover, h2 a:hover {
 #root > header {
     margin: 0;
 
-    background-color: dimgray;
-    color: white;
+    background-color: tan;
+    color: black;
 
-    border-bottom: 1px solid #282c34;
+    border-bottom: 1px solid #baaa8f;
 }
 
 #root > footer {
@@ -43,7 +43,7 @@ header > h1 {
     display: flex;
     flex-flow: wrap;
 
-    background-color: whitesmoke;
+    background-color: blanchedalmond;
     color: black;
 }
 
