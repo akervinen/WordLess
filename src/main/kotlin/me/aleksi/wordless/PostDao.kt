@@ -23,6 +23,15 @@ interface PostDao {
     """)
     fun findById(@Bind("id") id: Long): Post?
 
+    @SqlQuery("""
+        select p.* from "post" p
+        where p."title" LIKE concat('%',:query,'%')
+            OR p."content" LIKE concat('%',:query,'%')
+            OR p."summary" LIKE concat('%',:query,'%')
+        order by "posted_time" desc
+    """)
+    fun findByWord(@Bind query: String): List<Post>
+
     @SqlUpdate("""delete from "post" where "id"=(:id)""")
     fun deleteById(@Bind("id") id: Long)
 

@@ -13,8 +13,12 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
     val logger: Logger = LoggerFactory.getLogger(BlogController::class.java)
 
     @GetMapping("/api/posts")
-    fun getAllPosts(): List<Post> {
-        logger.debug("getAllPosts")
+    fun getPosts(@RequestParam query: String?): List<Post> {
+        logger.debug("getPosts(query=$query)")
+        if (query != null) {
+            return postDao.findByWord(query)
+        }
+
         return postDao.getAllPosts()
     }
 

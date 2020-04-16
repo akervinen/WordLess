@@ -1,9 +1,10 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import {BrowserRouter as Router, Link, Route, Switch, useHistory, useParams} from 'react-router-dom';
+import {BrowserRouter as Router, Link, Route, Switch, useHistory, useLocation, useParams} from 'react-router-dom';
 import './App.css';
 import Sidebar from './Sidebar';
 import PostForm from './PostForm';
 import {Post, PostHeader} from './Post';
+import SearchBar from "./SearchBar";
 
 function PostSummary(props) {
   const {post} = props;
@@ -24,18 +25,28 @@ function PostSummary(props) {
   </article>;
 }
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
 function PostList() {
   const [state, setState] = useState({loading: true, posts: []});
 
+  const query = useQuery();
+  const search = query.get("query");
+
   useEffect(() => {
     (async function fetchData() {
-      const result = await fetch('/api/posts');
+      const result = await fetch(!search ? '/api/posts' : `/api/posts?query=${search}`);
       setState({loading: false, posts: await result.json()});
     })();
-  }, []);
+  }, [search]);
 
   if (state.loading)
     return null;
+
+  if (!!search && state.posts.length === 0)
+    return <h2>No Posts Found</h2>;
 
   if (state.posts.length === 0)
     return <h2>No Posts Yet</h2>;
@@ -103,11 +114,15 @@ function App() {
   return <Router>
     <header>
       <h1><Link to="/">Spaghetti Forever</Link></h1>
+      <SearchBar/>
     </header>
 
     <div id="content">
       <main>
         <Switch>
+          <Route path="/search">
+            <PostList/>
+          </Route>
           <Route exact path="/posts/new">
             <PostForm onSubmit={submitNewPost}/>
           </Route>

@@ -22,7 +22,8 @@ a:hover, h1 a:hover, h2 a:hover {
 }
 
 #root > header {
-    margin: 0;
+    display: flex;
+    padding: 1em;
 
     background-color: tan;
     color: black;
@@ -30,13 +31,15 @@ a:hover, h1 a:hover, h2 a:hover {
     border-bottom: 1px solid #baaa8f;
 }
 
-#root > footer {
-    margin-top: 1em;
-}
+#root > header > h1 {
+    flex: 1 0 auto;
 
-header > h1 {
     margin: 0;
     padding: 1em;
+}
+
+#root > footer {
+    margin-top: 1em;
 }
 
 #content {

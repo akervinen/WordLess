@@ -23,8 +23,10 @@ article > header a:visited {
 
 article > header .meta {
     flex: 1 1 auto;
-    text-align: right;
     margin: 0;
+
+    text-align: right;
+    font-size: 90%;
 }
 
 article > footer {

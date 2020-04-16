@@ -34,12 +34,12 @@ export function CommentForm(props) {
   const onSubmit = async function onSubmit(evt) {
     evt.preventDefault();
 
-    const form = evt.currentTarget
+    const form = evt.currentTarget;
 
     const comment = {
       author: form.author.value,
       content: form.author.value
-    }
+    };
 
     const resp = await fetch(`/api/posts/${postId}/comments`, {
       method: 'POST',
