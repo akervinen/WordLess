@@ -19,4 +19,7 @@ interface CommentDao {
     """)
     @GetGeneratedKeys
     fun insert(@BindBean comment: Comment): Long
+
+    @SqlUpdate("""delete from "comment" where "id"=(:id)""")
+    fun deleteById(@Bind("id") id: Long)
 }

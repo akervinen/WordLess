@@ -43,6 +43,13 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.noContent().build()
     }
 
+    @DeleteMapping("/api/posts/{postId}/comments/{id}")
+    fun deleteComment(@PathVariable postId: Long, @PathVariable id: Long): ResponseEntity<Unit> {
+        logger.debug("deleteComment(postId=$postId, id=$id)")
+        commentDao.deleteById(id)
+        return ResponseEntity.noContent().build()
+    }
+
     @PostMapping("/api/posts")
     fun createPost(@RequestBody post: PostRequest): ResponseEntity<Unit> {
         logger.debug("createPost")

@@ -6,3 +6,12 @@ curl http://localhost:8080/api/posts/1
 
 ### Delete post
 curl -X DELETE http://localhost:8080/api/posts/1
+
+### Get all comments in a post
+curl http://localhost:8080/api/posts/1/comments
+
+### Get one comment
+curl http://localhost:8080/api/posts/1/comments/1
+
+### Delete comment
+curl -X DELETE http://localhost:8080/api/posts/1/comments/1

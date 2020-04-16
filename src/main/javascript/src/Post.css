@@ -1,0 +1,28 @@
+article {
+    margin: 0 0 4em;
+}
+
+article > header {
+    display: flex;
+    flex-wrap: wrap-reverse;
+}
+
+article > header h2 {
+    flex: 1 1 auto;
+    text-align: left;
+    margin: 0 0 .25em;
+    padding-bottom: .25em;
+
+    max-width: 100%;
+    overflow-wrap: break-word;
+}
+
+article > header .meta {
+    flex: 1 1 auto;
+    text-align: right;
+    margin: 0;
+}
+
+article > footer {
+    margin: .5em 0 0;
+}

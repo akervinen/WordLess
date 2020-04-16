@@ -5,10 +5,21 @@ function Comment(props) {
   const {comment} = props;
   const posted = new Date(comment.postedTime);
 
+  const onDelete = async function onDelete() {
+    await fetch(`/api/posts/${comment.postId}/comments/${comment.id}`, {method: 'DELETE'});
+    // TODO: do this in a more React way
+    window.location.reload();
+  }
+
   return <div className="comment">
     <header>
-      <span className="author">{comment.author}</span> · <time
-      dateTime={posted.toISOString()}>{posted.toLocaleString()}</time>
+      <span className="commentAuthor">{comment.author}</span>
+      <span>·</span>
+      <time dateTime={posted.toISOString()}>{posted.toLocaleString()}</time>
+      <span>·</span>
+      <span className="commentControls">
+        <button onClick={onDelete}>delete</button>
+      </span>
     </header>
 
     <div>
@@ -77,7 +88,7 @@ export function CommentList(props) {
     return null;
 
   if (state.comments.length === 0)
-    return <h2>No comments yet.</h2>;
+    return <h3>No comments yet.</h3>;
 
   return <div id="commentList">
     {state.comments.map(item => (

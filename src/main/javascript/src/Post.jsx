@@ -1,6 +1,7 @@
 import {Link, useParams} from 'react-router-dom';
 import React, {Fragment, useEffect, useState} from 'react';
 import {CommentForm, CommentList} from './Comments';
+import './Post.css';
 
 export function PostHeader(props) {
   const {post} = props;

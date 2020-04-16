@@ -2,13 +2,39 @@
     padding: 1em 1em 2em;
 }
 
-.comment > header > .author {
+.comment > header {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.comment > header > * {
+    flex: 0.05 1 auto;
+}
+
+.comment > header > .commentAuthor {
     font-weight: bold;
 }
 
 .comment > header > time {
     font-weight: lighter;
     color: darkslategrey;
+}
+
+.comment > header > .commentControls {
+    text-align: left;
+}
+
+.comment > header > .commentControls > button {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    color: #069;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.comment > header > .commentControls > button:hover {
+    color: violet;
 }
 
 #commentForm {
