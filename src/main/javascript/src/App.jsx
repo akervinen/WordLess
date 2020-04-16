@@ -98,6 +98,61 @@ function PostList() {
     </Fragment>);
 }
 
+function PostForm(props) {
+  const {onSubmit, post, history} = props;
+
+  return (
+    <Fragment>
+      <h1>{!post ? "New Post" : "Edit Post"}</h1>
+      <form id="postForm" onSubmit={onSubmit.bind(null, history)}>
+        <label>
+          Title:
+          <input type="text" name="title" placeholder="Enter title here" required maxLength={200}/>
+        </label>
+        <label id="publicLabel">
+          Public:
+          <input type="checkbox" name="public" defaultChecked={true}/>
+        </label>
+        <label>
+          Summary:
+          <textarea name="summary" placeholder="Enter post summary here" required/>
+        </label>
+        <label>
+          Content:
+          <textarea name="content" placeholder="Enter post content here" required/>
+        </label>
+        <input type="submit" value="Create"/>
+      </form>
+    </Fragment>);
+}
+
+async function submitNewPost(history, evt) {
+  evt.preventDefault();
+
+  const form = evt.currentTarget;
+  const post = {
+    title: form.title.value,
+    summary: form.summary.value,
+    content: form.content.value
+  };
+
+  const resp = await fetch('/api/posts', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(post)
+  });
+
+  if (resp.status === 201) {
+    let loc = resp.headers.get('Location');
+    let lastSlash = loc.lastIndexOf('/');
+    let id = Number(loc.substr(lastSlash + 1));
+
+    history.push('/posts/' + id);
+  }
+}
+
 async function deletePost(id, history) {
   await fetch(`/api/posts/${id}`, {method: 'DELETE'});
   history.replace('/');
@@ -112,6 +167,7 @@ function App() {
 
       <main>
         <Switch>
+          <Route path="/posts/new" render={props => <PostForm onSubmit={submitNewPost} {...props}/>}/>
           <Route path="/posts/:id" render={props => <Post onDelete={deletePost} {...props}/>}/>
           <Route path="/">
             <PostList/>
