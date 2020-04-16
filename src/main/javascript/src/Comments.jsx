@@ -17,6 +17,50 @@ function Comment(props) {
   </div>;
 }
 
+export function CommentForm(props) {
+  const {postId} = props;
+
+  const onSubmit = async function onSubmit(evt) {
+    evt.preventDefault();
+
+    const form = evt.currentTarget
+
+    const comment = {
+      author: form.author.value,
+      content: form.author.value
+    }
+
+    const resp = await fetch(`/api/posts/${postId}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(comment)
+    });
+
+    if (resp.status === 201) {
+      // TODO: do this in a more React way
+      window.location.reload();
+    }
+  }
+
+  return <form id="commentForm" onSubmit={onSubmit}>
+    <label>
+      Author:
+      <input name="author"
+             type="text"
+             required
+             maxLength={100}/>
+    </label>
+    <label>
+      Comment:
+      <textarea name="content"
+                required/>
+    </label>
+    <input type="submit" value="Post Comment"/>
+  </form>
+}
+
 export function CommentList(props) {
   const {postId} = props;
 

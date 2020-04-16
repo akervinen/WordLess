@@ -26,8 +26,14 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
 
     @GetMapping("/api/posts/{postId}/comments")
     fun getComments(@PathVariable postId: Long): List<Comment> {
-        logger.debug("getComments(id=$postId)")
+        logger.debug("getComments(postId=$postId)")
         return commentDao.getComments(postId)
+    }
+
+    @GetMapping("/api/posts/{postId}/comments/{id}")
+    fun getComment(@PathVariable postId: Long, @PathVariable id: Long): ResponseEntity<Comment> {
+        logger.debug("getComment(postId=$postId, id=$id)")
+        return ResponseEntity.of(Optional.ofNullable(commentDao.getComment(id)))
     }
 
     @DeleteMapping("/api/posts/{id}")
@@ -47,6 +53,21 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         val loc = MvcUriComponentsBuilder
                 .fromMethodName(javaClass, "getPost", id)
                 .buildAndExpand(id)
+                .toUri()
+
+        return ResponseEntity.created(loc).build()
+    }
+
+    @PostMapping("/api/posts/{postId}/comments")
+    fun createComment(@PathVariable postId: Long, @RequestBody comment: CommentRequest): ResponseEntity<Unit> {
+        logger.debug("createComment")
+
+        val created = Comment(0, postId, comment.author, Instant.now(), comment.content)
+        val id = commentDao.insert(created)
+
+        val loc = MvcUriComponentsBuilder
+                .fromMethodName(javaClass, "getComment", postId, id)
+                .buildAndExpand(postId, id)
                 .toUri()
 
         return ResponseEntity.created(loc).build()

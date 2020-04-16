@@ -10,3 +10,36 @@
     font-weight: lighter;
     color: darkslategrey;
 }
+
+#commentForm {
+    display: flex;
+    flex-flow: column;
+    align-items: stretch;
+}
+
+#commentForm > * {
+    display: flex;
+    flex-flow: column;
+    margin: .5em 0;
+}
+
+#commentForm > label > * {
+    margin: 1em 2em;
+
+    width: 80%;
+}
+
+#commentForm input[name=author] {
+    height: 1.5em;
+}
+
+#commentForm textarea[name=content] {
+    height: 10em;
+}
+
+#commentForm > input[type=submit] {
+    width: 10em;
+    height: 3em;
+
+    align-self: start;
+}

@@ -29,3 +29,6 @@ create table if not exists "comment"
     primary key (id),
     foreign key (post_id) references "post" (id)
 );
+
+create index comment_post_id on "comment" (post_id);
+create index comment_posted_time on "comment" (posted_time);

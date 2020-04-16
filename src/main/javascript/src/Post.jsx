@@ -1,6 +1,6 @@
 import {Link, useParams} from 'react-router-dom';
 import React, {Fragment, useEffect, useState} from 'react';
-import {CommentList} from './Comments';
+import {CommentForm, CommentList} from './Comments';
 
 export function PostHeader(props) {
   const {post} = props;
@@ -59,6 +59,9 @@ export function Post() {
     <section className="comments">
       <h2>Comments</h2>
       <CommentList postId={id}/>
+
+      <h3>New Comment</h3>
+      <CommentForm postId={id}/>
     </section>
   </Fragment>;
 }
