@@ -7,10 +7,20 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery
 import org.jdbi.v3.sqlobject.statement.SqlUpdate
 
 interface PostDao {
-    @SqlQuery("""select * from "post" order by "posted_time" desc""")
+    @SqlQuery("""
+        select p.*, count(c."post_id") as "comment_count" from "post" p
+        left join "comment" c on p."id" = c."post_id"
+        group by p."id", p."posted_time"
+        order by p."posted_time" desc
+    """)
     fun getAllPosts(): List<Post>
 
-    @SqlQuery("""select * from "post" where "id"=(:id)""")
+    @SqlQuery("""
+        select p.*, count(c."post_id") as "comment_count" from "post" p
+        left join "comment" c on p."id" = c."post_id"
+        where p."id"=:id
+        group by p."id"
+    """)
     fun findById(@Bind("id") id: Long): Post?
 
     @SqlUpdate("""delete from "post" where "id"=(:id)""")

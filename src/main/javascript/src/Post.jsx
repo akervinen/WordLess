@@ -52,12 +52,9 @@ export function Post() {
       <div className="content">
         {state.post.content}
       </div>
-
-      <footer>
-      </footer>
     </article>
 
-    <section className="comments">
+    <section id="comments">
       <h2>Comments</h2>
       <CommentList postId={id}/>
 

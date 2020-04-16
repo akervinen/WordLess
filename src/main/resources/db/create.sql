@@ -1,5 +1,6 @@
 -- noinspection SqlResolveForFile @ object-type/"serial"
 
+drop table if exists "comment";
 drop table if exists "post";
 
 create table if not exists "post"
@@ -16,8 +17,6 @@ create table if not exists "post"
 );
 
 create index post_posted_time on "post" (posted_time);
-
-drop table if exists "comment";
 
 create table if not exists "comment"
 (

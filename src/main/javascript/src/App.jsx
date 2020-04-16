@@ -7,7 +7,7 @@ import {Post, PostHeader} from './Post';
 
 function PostSummary(props) {
   const {post} = props;
-  return (<article>
+  return <article>
     <PostHeader post={post}/>
 
     <div className="summary">
@@ -16,8 +16,12 @@ function PostSummary(props) {
 
     <footer>
       <Link to={`/posts/${post.id}-${post.slug}`}>Read More...</Link>
+      <span> · </span>
+      <Link to={`/posts/${post.id}-${post.slug}#comments`}>
+        {post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}
+      </Link>
     </footer>
-  </article>);
+  </article>;
 }
 
 function PostList() {
@@ -36,12 +40,11 @@ function PostList() {
   if (state.posts.length === 0)
     return <h2>No Posts Yet</h2>;
 
-  return (
-    <Fragment>
-      {state.posts.map(item => (
-        <PostSummary key={item.id} post={item}/>)
-      )}
-    </Fragment>);
+  return <Fragment>
+    {state.posts.map(item => (
+      <PostSummary key={item.id} post={item}/>)
+    )}
+  </Fragment>;
 }
 
 function PostControls(props) {
@@ -49,10 +52,10 @@ function PostControls(props) {
   const {id, slug} = useParams();
   const history = useHistory();
 
-  return (<div id="controls">
+  return <div id="controls">
     <Link to={`/posts/${!slug ? id : `${id}-${slug}`}/edit`}>Edit Post</Link>
     <button onClick={onDelete.bind(null, id, history)}>Delete Post</button>
-  </div>);
+  </div>;
 }
 
 async function submitNewPost(state, history, evt) {
@@ -97,53 +100,51 @@ async function deletePost(id, history) {
 }
 
 function App() {
-  return (
-    <Router>
-      <header>
-        <h1><Link to="/">Spaghetti Forever</Link></h1>
-      </header>
+  return <Router>
+    <header>
+      <h1><Link to="/">Spaghetti Forever</Link></h1>
+    </header>
 
-      <div id="content">
-        <main>
-          <Switch>
-            <Route exact path="/posts/new">
-              <PostForm onSubmit={submitNewPost}/>
-            </Route>
-            <Route path={["/posts/:id-:slug/edit", "/posts/:id/edit"]}>
-              <PostForm onSubmit={editPost}/>
-            </Route>
-            <Route path={["/posts/:id-:slug", "/posts/:id"]}>
-              <Post/>
-            </Route>
-            <Route path="/">
-              <PostList/>
-            </Route>
-          </Switch>
-        </main>
-
+    <div id="content">
+      <main>
         <Switch>
-          <Route exact path="/posts/new"/>
+          <Route exact path="/posts/new">
+            <PostForm onSubmit={submitNewPost}/>
+          </Route>
+          <Route path={["/posts/:id-:slug/edit", "/posts/:id/edit"]}>
+            <PostForm onSubmit={editPost}/>
+          </Route>
+          <Route path={["/posts/:id-:slug", "/posts/:id"]}>
+            <Post/>
+          </Route>
           <Route path="/">
-            <Sidebar>
-              <Switch>
-                <Route exact path="/posts/new"/>
-                <Route path={["/posts/:id-:slug", "/posts/:id"]}>
-                  <PostControls onDelete={deletePost}/>
-                </Route>
-                <Route path="/">
-                  <Link to="/posts/new">New Post</Link>
-                </Route>
-              </Switch>
-            </Sidebar>
+            <PostList/>
           </Route>
         </Switch>
-      </div>
+      </main>
 
-      <footer>
-        © Aleksi Kervinen 2020
-      </footer>
-    </Router>
-  );
+      <Switch>
+        <Route exact path="/posts/new"/>
+        <Route path="/">
+          <Sidebar>
+            <Switch>
+              <Route exact path="/posts/new"/>
+              <Route path={["/posts/:id-:slug", "/posts/:id"]}>
+                <PostControls onDelete={deletePost}/>
+              </Route>
+              <Route path="/">
+                <Link to="/posts/new">New Post</Link>
+              </Route>
+            </Switch>
+          </Sidebar>
+        </Route>
+      </Switch>
+    </div>
+
+    <footer>
+      © Aleksi Kervinen 2020
+    </footer>
+  </Router>;
 }
 
 export default App;
