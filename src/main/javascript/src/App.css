@@ -57,3 +57,28 @@ main {
     display: block;
     margin-bottom: 1em;
 }
+
+#controls button {
+    display: block;
+
+    padding: 0 !important;
+    width: 100%;
+    text-align: left;
+
+    background: none !important;
+    color: #069;
+    border: none;
+
+    font-family: 'Lato', sans-serif;
+    font-size: 1em;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#controls button:hover {
+    color: violet;
+}
+
+#controls button:active {
+    color: red;
+}
