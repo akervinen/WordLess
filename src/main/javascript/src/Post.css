@@ -17,6 +17,10 @@ article > header h2 {
     overflow-wrap: break-word;
 }
 
+article > header a:visited {
+    color: grey;
+}
+
 article > header .meta {
     flex: 1 1 auto;
     text-align: right;
