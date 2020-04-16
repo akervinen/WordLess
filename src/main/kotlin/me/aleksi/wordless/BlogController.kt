@@ -35,7 +35,11 @@ class BlogController(private val postDao: PostDao) {
     fun createPost(@RequestBody post: PostRequest): ResponseEntity<Unit> {
         logger.debug("createPost")
 
-        val createdPost = Post(0, post.title, post.title.slugify(), post.public, Instant.now(), null, post.summary, post.content)
+        var slug = post.title.slugify()
+        if (slug == "edit")
+            slug = "edit-1"
+
+        val createdPost = Post(0, post.title, slug, post.public, Instant.now(), null, post.summary, post.content)
         val id = postDao.insert(createdPost)
 
         val loc = MvcUriComponentsBuilder
@@ -44,5 +48,28 @@ class BlogController(private val postDao: PostDao) {
                 .toUri()
 
         return ResponseEntity.created(loc).build()
+    }
+
+    @PutMapping("/api/posts/{id}")
+    fun updatePost(@PathVariable id: Long, @RequestBody post: PostRequest): ResponseEntity<Unit> {
+        logger.debug("updatePost")
+
+        val original = postDao.findById(id) ?: return ResponseEntity.notFound().build()
+
+        var slug = post.title.slugify()
+        if (slug == "edit")
+            slug = "edit-1"
+
+        val updatedPost = Post(id,
+                post.title,
+                slug,
+                post.public,
+                original.postedTime,
+                Instant.now(),
+                post.summary,
+                post.content)
+        postDao.update(id, updatedPost)
+
+        return ResponseEntity.noContent().build()
     }
 }

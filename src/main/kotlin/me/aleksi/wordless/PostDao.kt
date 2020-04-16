@@ -22,4 +22,15 @@ interface PostDao {
     """)
     @GetGeneratedKeys
     fun insert(@BindBean post: Post): Long
+
+    @SqlUpdate("""
+        update "post"
+        set "title" = :title,
+            "public" = :public,
+            "summary" = :summary,
+            "content" = :content,
+            "edited_time" = :editedTime
+        where "id"=(:id)
+    """)
+    fun update(@Bind id: Long, @BindBean post: Post)
 }

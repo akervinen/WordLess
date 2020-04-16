@@ -1,6 +1,7 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import {BrowserRouter as Router, Link, Route, Switch, useParams} from 'react-router-dom';
 import './App.css';
+import Sidebar from "./Sidebar";
 
 function PostHeader(props) {
   const {post} = props;
@@ -35,8 +36,7 @@ function PostNotFound() {
   return (<h1>Post Not Found</h1>);
 }
 
-function Post(props) {
-  const {onDelete, history} = props;
+function Post() {
   const {id} = useParams();
   const [state, setState] = useState({loading: true, post: null});
 
@@ -51,7 +51,10 @@ function Post(props) {
   }, [id]);
 
   if (state.loading)
-    return null;
+    return <article>
+      <div className="content">
+      </div>
+    </article>;
 
   if (state.post === null) {
     return <article>
@@ -70,7 +73,6 @@ function Post(props) {
       </div>
 
       <footer>
-        <button onClick={onDelete.bind(null, id, history)}>Delete</button>
       </footer>
     </article>);
 }
@@ -100,49 +102,102 @@ function PostList() {
 }
 
 function PostForm(props) {
-  const {onSubmit, post, history} = props;
+  const {id} = useParams();
+  const {onSubmit, history} = props;
+  const [state, setState] = useState({
+    title: "",
+    public: true,
+    summary: "",
+    content: ""
+  });
+
+  useEffect(() => {
+    if (!id) return;
+    (async function fetchData() {
+      const result = await fetch(`/api/posts/${id}`);
+      const data = result.ok ? await result.json() : {};
+      setState((prevState => {
+        return {
+          ...prevState,
+          ...data
+        }
+      }));
+    })();
+  }, [id]);
+
+  const onChange = function onChange(evt) {
+    const target = evt.target;
+    const value = target.name === 'public' ? target.checked : target.value;
+    const name = target.name;
+    setState((prevState => {
+      return {
+        ...prevState,
+        [name]: value
+      }
+    }));
+  };
 
   return (
     <Fragment>
-      <h1>{!post ? "New Post" : "Edit Post"}</h1>
-      <form id="postForm" onSubmit={onSubmit.bind(null, history)}>
+      <h1>{!id ? "New Post" : "Edit Post"}</h1>
+      <form id="postForm" onSubmit={onSubmit.bind(null, state, history)}>
         <label>
           Title:
-          <input type="text" name="title" placeholder="Enter title here" required maxLength={200}/>
+          <input name="title"
+                 type="text"
+                 placeholder="Enter title here"
+                 value={state.title}
+                 onChange={onChange}
+                 required
+                 maxLength={200}/>
         </label>
         <label id="publicLabel">
           Public:
-          <input type="checkbox" name="public" defaultChecked={true}/>
+          <input name="public"
+                 type="checkbox"
+                 checked={state['public']}
+                 onChange={onChange}/>
         </label>
         <label>
           Summary:
-          <textarea name="summary" placeholder="Enter post summary here" required/>
+          <textarea name="summary"
+                    placeholder="Enter post summary here"
+                    required
+                    value={state.summary}
+                    onChange={onChange}/>
         </label>
         <label>
           Content:
-          <textarea name="content" placeholder="Enter post content here" required/>
+          <textarea name="content"
+                    placeholder="Enter post content here"
+                    required
+                    value={state.content}
+                    onChange={onChange}/>
         </label>
-        <input type="submit" value="Create"/>
+        <input type="submit" value={!id ? 'Create' : 'Edit'}/>
       </form>
     </Fragment>);
 }
 
-async function submitNewPost(history, evt) {
-  evt.preventDefault();
+function PostControls(props) {
+  const {onDelete, history} = props;
+  const {id} = useParams();
 
-  const form = evt.currentTarget;
-  const post = {
-    title: form.title.value,
-    summary: form.summary.value,
-    content: form.content.value
-  };
+  return (<div id="controls">
+    <Link to={`/posts/${id}/edit`}>Edit Post</Link>
+    <button onClick={onDelete.bind(null, id, history)}>Delete Post</button>
+  </div>);
+}
+
+async function submitNewPost(state, history, evt) {
+  evt.preventDefault();
 
   const resp = await fetch('/api/posts', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(post)
+    body: JSON.stringify(state)
   });
 
   if (resp.status === 201) {
@@ -150,7 +205,23 @@ async function submitNewPost(history, evt) {
     let lastSlash = loc.lastIndexOf('/');
     let id = Number(loc.substr(lastSlash + 1));
 
-    history.push('/posts/' + id);
+    history.push(`/posts/${id}`);
+  }
+}
+
+async function editPost(state, history, evt) {
+  evt.preventDefault();
+
+  const resp = await fetch(`/api/posts/${state.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(state)
+  });
+
+  if (resp.status === 204) {
+    history.push(`/posts/${state.id}`);
   }
 }
 
@@ -166,15 +237,30 @@ function App() {
         <h1><Link to="/">Spaghetti Forever</Link></h1>
       </header>
 
-      <main>
-        <Switch>
-          <Route path="/posts/new" render={props => <PostForm onSubmit={submitNewPost} {...props}/>}/>
-          <Route path="/posts/:id" render={props => <Post onDelete={deletePost} {...props}/>}/>
-          <Route path="/">
-            <PostList/>
-          </Route>
-        </Switch>
-      </main>
+      <div id="content">
+        <main>
+          <Switch>
+            <Route exact path="/posts/new" render={props => <PostForm onSubmit={submitNewPost} {...props}/>}/>
+            <Route exact path="/posts/:id/edit" render={props => <PostForm onSubmit={editPost} {...props}/>}/>
+            <Route path="/posts/:id">
+              <Post/>
+            </Route>
+            <Route path="/">
+              <PostList/>
+            </Route>
+          </Switch>
+        </main>
+
+        <Sidebar>
+          <Switch>
+            <Route exact path="/posts/new"/>
+            <Route path="/posts/:id" render={props => <PostControls onDelete={deletePost} {...props}/>}/>
+            <Route path="/">
+              <Link to="/posts/new">New Post</Link>
+            </Route>
+          </Switch>
+        </Sidebar>
+      </div>
     </Router>
   );
 }
