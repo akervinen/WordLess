@@ -26,7 +26,7 @@ create table if not exists "comment"
     posted_time timestamp    not null,
     content     text         not null,
     primary key (id),
-    foreign key (post_id) references "post" (id)
+    foreign key (post_id) references "post" (id) on delete cascade
 );
 
 create index comment_post_id on "comment" (post_id);
