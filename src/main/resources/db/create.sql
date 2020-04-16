@@ -1,8 +1,8 @@
 -- noinspection SqlResolveForFile @ object-type/"serial"
 
-drop table if exists post;
+drop table if exists "post";
 
-create table if not exists post
+create table if not exists "post"
 (
     id          serial,
     title       varchar(200) not null,
@@ -12,8 +12,20 @@ create table if not exists post
     edited_time timestamp,
     summary     text         not null,
     content     text         not null,
-    constraint POST_PK
-        primary key (id)
+    primary key (id)
 );
 
-create index post_posted_time on post (posted_time);
+create index post_posted_time on "post" (posted_time);
+
+drop table if exists "comment";
+
+create table if not exists "comment"
+(
+    id          serial,
+    post_id     serial,
+    author      varchar(100) not null,
+    posted_time timestamp    not null,
+    content     text         not null,
+    primary key (id),
+    foreign key (post_id) references "post" (id)
+);

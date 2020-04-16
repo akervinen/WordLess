@@ -1,10 +1,12 @@
-import {useParams} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import React, {Fragment, useEffect, useState} from 'react';
 import './PostForm.css'
 
 export default function PostForm(props) {
   const {id} = useParams();
-  const {onSubmit, history} = props;
+  const history = useHistory();
+
+  const {onSubmit} = props;
   const [state, setState] = useState({
     title: "",
     public: true,

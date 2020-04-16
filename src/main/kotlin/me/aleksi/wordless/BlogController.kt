@@ -9,7 +9,7 @@ import java.time.Instant
 import java.util.*
 
 @RestController
-class BlogController(private val postDao: PostDao) {
+class BlogController(private val postDao: PostDao, private val commentDao: CommentDao) {
     val logger: Logger = LoggerFactory.getLogger(BlogController::class.java)
 
     @GetMapping("/api/posts")
@@ -24,6 +24,12 @@ class BlogController(private val postDao: PostDao) {
         return ResponseEntity.of(Optional.ofNullable(postDao.findById(id)))
     }
 
+    @GetMapping("/api/posts/{postId}/comments")
+    fun getComments(@PathVariable postId: Long): List<Comment> {
+        logger.debug("getComments(id=$postId)")
+        return commentDao.getComments(postId)
+    }
+
     @DeleteMapping("/api/posts/{id}")
     fun deletePost(@PathVariable id: Long): ResponseEntity<Unit> {
         logger.debug("deletePost(id=$id)")
@@ -35,11 +41,7 @@ class BlogController(private val postDao: PostDao) {
     fun createPost(@RequestBody post: PostRequest): ResponseEntity<Unit> {
         logger.debug("createPost")
 
-        var slug = post.title.slugify()
-        if (slug == "edit")
-            slug = "edit-1"
-
-        val createdPost = Post(0, post.title, slug, post.public, Instant.now(), null, post.summary, post.content)
+        val createdPost = Post(0, post.title, post.title.slugify(), post.public, Instant.now(), null, post.summary, post.content)
         val id = postDao.insert(createdPost)
 
         val loc = MvcUriComponentsBuilder
@@ -56,13 +58,9 @@ class BlogController(private val postDao: PostDao) {
 
         val original = postDao.findById(id) ?: return ResponseEntity.notFound().build()
 
-        var slug = post.title.slugify()
-        if (slug == "edit")
-            slug = "edit-1"
-
         val updatedPost = Post(id,
                 post.title,
-                slug,
+                post.title.slugify(),
                 post.public,
                 original.postedTime,
                 Instant.now(),

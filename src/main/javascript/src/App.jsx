@@ -1,5 +1,5 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import {BrowserRouter as Router, Link, Route, Switch, useParams} from 'react-router-dom';
+import {BrowserRouter as Router, Link, Route, Switch, useHistory, useParams} from 'react-router-dom';
 import './App.css';
 import Sidebar from './Sidebar';
 import PostForm from './PostForm';
@@ -15,7 +15,7 @@ function PostSummary(props) {
     </div>
 
     <footer>
-      <Link to={`/posts/${post.id}/${post.slug}`}>Read More...</Link>
+      <Link to={`/posts/${post.id}-${post.slug}`}>Read More...</Link>
     </footer>
   </article>);
 }
@@ -45,11 +45,12 @@ function PostList() {
 }
 
 function PostControls(props) {
-  const {onDelete, history} = props;
-  const {id} = useParams();
+  const {onDelete} = props;
+  const {id, slug} = useParams();
+  const history = useHistory();
 
   return (<div id="controls">
-    <Link to={`/posts/${id}/edit`}>Edit Post</Link>
+    <Link to={`/posts/${!slug ? id : `${id}-${slug}`}/edit`}>Edit Post</Link>
     <button onClick={onDelete.bind(null, id, history)}>Delete Post</button>
   </div>);
 }
@@ -105,9 +106,13 @@ function App() {
       <div id="content">
         <main>
           <Switch>
-            <Route exact path="/posts/new" render={props => <PostForm onSubmit={submitNewPost} {...props}/>}/>
-            <Route exact path="/posts/:id/edit" render={props => <PostForm onSubmit={editPost} {...props}/>}/>
-            <Route path="/posts/:id">
+            <Route exact path="/posts/new">
+              <PostForm onSubmit={submitNewPost}/>
+            </Route>
+            <Route path={["/posts/:id-:slug/edit", "/posts/:id/edit"]}>
+              <PostForm onSubmit={editPost}/>
+            </Route>
+            <Route path={["/posts/:id-:slug", "/posts/:id"]}>
               <Post/>
             </Route>
             <Route path="/">
@@ -122,7 +127,9 @@ function App() {
             <Sidebar>
               <Switch>
                 <Route exact path="/posts/new"/>
-                <Route path="/posts/:id" render={props => <PostControls onDelete={deletePost} {...props}/>}/>
+                <Route path={["/posts/:id-:slug", "/posts/:id"]}>
+                  <PostControls onDelete={deletePost}/>
+                </Route>
                 <Route path="/">
                   <Link to="/posts/new">New Post</Link>
                 </Route>

@@ -1,5 +1,6 @@
 import {Link, useParams} from 'react-router-dom';
-import React, {useEffect, useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
+import {CommentList} from './Comments';
 
 export function PostHeader(props) {
   const {post} = props;
@@ -7,7 +8,7 @@ export function PostHeader(props) {
   return (
     <header>
       <h2>
-        <Link to={`/posts/${post.id}/${post.slug}`}>{post.title}</Link>
+        <Link to={`/posts/${post.id}-${post.slug}`}>{post.title}</Link>
       </h2>
       <p className="meta">
         <time dateTime={posted.toISOString()}>{posted.toLocaleString()}</time>
@@ -43,7 +44,7 @@ export function Post() {
     </article>;
   }
 
-  return (
+  return <Fragment>
     <article>
       <PostHeader post={state.post}/>
 
@@ -53,5 +54,11 @@ export function Post() {
 
       <footer>
       </footer>
-    </article>);
+    </article>
+
+    <section className="comments">
+      <h2>Comments</h2>
+      <CommentList postId={id}/>
+    </section>
+  </Fragment>;
 }

@@ -1,0 +1,12 @@
+.comment {
+    padding: 1em 1em 2em;
+}
+
+.comment > header > .author {
+    font-weight: bold;
+}
+
+.comment > header > time {
+    font-weight: lighter;
+    color: darkslategrey;
+}

@@ -41,6 +41,11 @@ class WordLessApplication constructor(private val jdbi: Jdbi) : CommandLineRunne
     fun getPostDao(jdbi: Jdbi): PostDao {
         return jdbi.onDemand(PostDao::class.java)
     }
+
+    @Bean
+    fun getCommentDao(jdbi: Jdbi): CommentDao {
+        return jdbi.onDemand(CommentDao::class.java)
+    }
 }
 
 fun main(args: Array<String>) {
