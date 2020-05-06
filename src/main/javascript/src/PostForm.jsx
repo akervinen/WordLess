@@ -40,44 +40,43 @@ export default function PostForm(props) {
     }));
   };
 
-  return (
-    <Fragment>
-      <h2>{!id ? "New Post" : "Edit Post"}</h2>
-      <form id="postForm" onSubmit={onSubmit.bind(null, state, history)}>
-        <label>
-          Title:
-          <input name="title"
-                 type="text"
-                 placeholder="Enter title here"
-                 value={state.title}
-                 onChange={onChange}
-                 required
-                 maxLength={200}/>
-        </label>
-        <label id="publicLabel">
-          Public:
-          <input name="public"
-                 type="checkbox"
-                 checked={state['public']}
-                 onChange={onChange}/>
-        </label>
-        <label>
-          Summary:
-          <textarea name="summary"
-                    placeholder="Enter post summary here"
-                    required
-                    value={state.summary}
-                    onChange={onChange}/>
-        </label>
-        <label>
-          Content:
-          <textarea name="content"
-                    placeholder="Enter post content here"
-                    required
-                    value={state.content}
-                    onChange={onChange}/>
-        </label>
-        <input type="submit" value={!id ? 'Create' : 'Edit'}/>
-      </form>
-    </Fragment>);
+  return <Fragment>
+    <h2>{!id ? "New Post" : "Edit Post"}</h2>
+    <form id="postForm" onSubmit={onSubmit.bind(null, state, history)}>
+      <label>
+        Title:
+        <input name="title"
+               type="text"
+               placeholder="Enter title here"
+               value={state.title}
+               onChange={onChange}
+               required
+               maxLength={200}/>
+      </label>
+      <label id="publicLabel">
+        Public:
+        <input name="public"
+               type="checkbox"
+               checked={state['public']}
+               onChange={onChange}/>
+      </label>
+      <label>
+        Summary:
+        <textarea name="summary"
+                  placeholder="Enter post summary here"
+                  required
+                  value={state.summary}
+                  onChange={onChange}/>
+      </label>
+      <label>
+        Content:
+        <textarea name="content"
+                  placeholder="Enter post content here"
+                  required
+                  value={state.content}
+                  onChange={onChange}/>
+      </label>
+      <input type="submit" value={!id ? 'Create' : 'Edit'}/>
+    </form>
+  </Fragment>;
 }

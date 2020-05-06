@@ -19,25 +19,24 @@ export function PostHeader(props) {
 
 export function Post() {
   const {id} = useParams();
-  const [state, setState] = useState({loading: true, post: null});
+  const [loading, setLoading] = useState(true);
+  const [post, setPost] = useState(null);
 
   useEffect(() => {
     (async function fetchData() {
       const result = await fetch(`/api/posts/${id}`);
-      setState({
-        loading: false,
-        post: (result.ok ? await result.json() : null)
-      });
+      setLoading(false);
+      setPost(result.ok ? await result.json() : null);
     })();
   }, [id]);
 
-  if (state.loading)
+  if (loading)
     return <article>
       <div className="content">
       </div>
     </article>;
 
-  if (state.post === null) {
+  if (post === null) {
     return <article>
       <div className="content">
         <h1>Post Not Found</h1>
@@ -47,10 +46,10 @@ export function Post() {
 
   return <Fragment>
     <article>
-      <PostHeader post={state.post}/>
+      <PostHeader post={post}/>
 
       <div className="content">
-        {state.post.content}
+        {post.content}
       </div>
     </article>
 

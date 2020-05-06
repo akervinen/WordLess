@@ -30,7 +30,8 @@ function useQuery() {
 }
 
 function PostList() {
-  const [state, setState] = useState({loading: true, posts: []});
+  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
 
   const query = useQuery();
   const search = query.get("query");
@@ -38,21 +39,26 @@ function PostList() {
   useEffect(() => {
     (async function fetchData() {
       const result = await fetch(!search ? '/api/posts' : `/api/posts?query=${search}`);
-      setState({loading: false, posts: await result.json()});
+      console.log(result);
+      setLoading(false);
+      setPosts(result.ok ? await result.json() : null);
     })();
   }, [search]);
 
-  if (state.loading)
+  if (loading)
     return null;
 
-  if (!!search && state.posts.length === 0)
-    return <h2>No Posts Found</h2>;
+  if (!Array.isArray(posts))
+    return <h2>Error loading posts</h2>
 
-  if (state.posts.length === 0)
-    return <h2>No Posts Yet</h2>;
+  if (!!search && posts.length === 0)
+    return <h2>No posts found</h2>;
+
+  if (posts.length === 0)
+    return <h2>No posts yet</h2>;
 
   return <Fragment>
-    {state.posts.map(item => (
+    {posts.map(item => (
       <PostSummary key={item.id} post={item}/>)
     )}
   </Fragment>;

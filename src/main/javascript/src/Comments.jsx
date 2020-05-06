@@ -75,23 +75,28 @@ export function CommentForm(props) {
 export function CommentList(props) {
   const {postId} = props;
 
-  const [state, setState] = useState({loading: true, comments: []});
+  const [loading, setLoading] = useState(true);
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     (async function fetchData() {
       const result = await fetch(`/api/posts/${postId}/comments`);
-      setState({loading: false, comments: await result.json()});
+      setLoading(false);
+      setComments(result.ok ? await result.json() : null);
     })();
   }, [postId]);
 
-  if (state.loading)
+  if (loading)
     return null;
 
-  if (state.comments.length === 0)
+  if (!Array.isArray(comments))
+    return <h2>Error loading comments</h2>
+
+  if (comments.length === 0)
     return <h3>No comments yet.</h3>;
 
   return <div id="commentList">
-    {state.comments.map(item => (
+    {comments.map(item => (
       <Comment key={item.id} comment={item}/>)
     )}
   </div>;
