@@ -3,6 +3,7 @@ package me.aleksi.wordless
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder
 import java.time.Instant
@@ -40,6 +41,7 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.of(Optional.ofNullable(commentDao.getComment(id)))
     }
 
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/api/posts/{id}")
     fun deletePost(@PathVariable id: Long): ResponseEntity<Unit> {
         logger.debug("deletePost(id=$id)")
@@ -47,6 +49,7 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.noContent().build()
     }
 
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/api/posts/{postId}/comments/{id}")
     fun deleteComment(@PathVariable postId: Long, @PathVariable id: Long): ResponseEntity<Unit> {
         logger.debug("deleteComment(postId=$postId, id=$id)")
@@ -54,6 +57,7 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.noContent().build()
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping("/api/posts")
     fun createPost(@RequestBody post: PostRequest): ResponseEntity<Unit> {
         logger.debug("createPost")
@@ -69,6 +73,7 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.created(loc).build()
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping("/api/posts/{postId}/comments")
     fun createComment(@PathVariable postId: Long, @RequestBody comment: CommentRequest): ResponseEntity<Unit> {
         logger.debug("createComment")
@@ -84,6 +89,7 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.created(loc).build()
     }
 
+    @Secured("ROLE_ADMIN")
     @PutMapping("/api/posts/{id}")
     fun updatePost(@PathVariable id: Long, @RequestBody post: PostRequest): ResponseEntity<Unit> {
         logger.debug("updatePost")

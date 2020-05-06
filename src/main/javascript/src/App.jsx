@@ -1,10 +1,20 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import {BrowserRouter as Router, Link, Route, Switch, useHistory, useLocation, useParams} from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Link,
+  Redirect,
+  Route,
+  Switch,
+  useHistory,
+  useLocation,
+  useParams
+} from 'react-router-dom';
 import './App.css';
 import Sidebar from './Sidebar';
 import PostForm from './PostForm';
 import {Post, PostHeader} from './Post';
 import SearchBar from "./SearchBar";
+import {useCookies} from "react-cookie";
 
 function PostSummary(props) {
   const {post} = props;
@@ -64,56 +74,26 @@ function PostList() {
   </Fragment>;
 }
 
-function PostControls(props) {
-  const {onDelete} = props;
+function PostControls() {
   const {id, slug} = useParams();
   const history = useHistory();
+  const [cookies] = useCookies(['XSRF-TOKEN']);
+
+  const deletePost = async () => {
+    const response = await fetch(`/api/posts/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'X-XSRF-TOKEN': cookies['XSRF-TOKEN']
+      }
+    });
+    if (response.ok)
+      history.replace('/');
+  }
 
   return <div id="controls">
     <Link to={`/posts/${!slug ? id : `${id}-${slug}`}/edit`}>Edit Post</Link>
-    <button onClick={onDelete.bind(null, id, history)}>Delete Post</button>
+    <button onClick={deletePost}>Delete Post</button>
   </div>;
-}
-
-async function submitNewPost(state, history, evt) {
-  evt.preventDefault();
-
-  const resp = await fetch('/api/posts', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(state)
-  });
-
-  if (resp.status === 201) {
-    let loc = resp.headers.get('Location');
-    let lastSlash = loc.lastIndexOf('/');
-    let id = Number(loc.substr(lastSlash + 1));
-
-    history.push(`/posts/${id}`);
-  }
-}
-
-async function editPost(state, history, evt) {
-  evt.preventDefault();
-
-  const resp = await fetch(`/api/posts/${state.id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(state)
-  });
-
-  if (resp.status === 204) {
-    history.push(`/posts/${state.id}`);
-  }
-}
-
-async function deletePost(id, history) {
-  await fetch(`/api/posts/${id}`, {method: 'DELETE'});
-  history.replace('/');
 }
 
 function App() {
@@ -130,10 +110,14 @@ function App() {
             <PostList/>
           </Route>
           <Route exact path="/posts/new">
-            <PostForm onSubmit={submitNewPost}/>
+            <PostForm>
+              {(post) => <Redirect to={`/posts/${post.id}`}/>}
+            </PostForm>
           </Route>
           <Route path={["/posts/:id-:slug/edit", "/posts/:id/edit"]}>
-            <PostForm onSubmit={editPost}/>
+            <PostForm editPost>
+              {(post) => <Redirect to={`/posts/${post.id}`}/>}
+            </PostForm>
           </Route>
           <Route path={["/posts/:id-:slug", "/posts/:id"]}>
             <Post/>
@@ -151,7 +135,7 @@ function App() {
             <Switch>
               <Route exact path="/posts/new"/>
               <Route path={["/posts/:id-:slug", "/posts/:id"]}>
-                <PostControls onDelete={deletePost}/>
+                <PostControls/>
               </Route>
               <Route path="/">
                 <Link to="/posts/new">New Post</Link>
