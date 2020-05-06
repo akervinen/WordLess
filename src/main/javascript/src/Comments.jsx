@@ -1,12 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import './Comments.css';
+import {useCookies} from "react-cookie";
 
 function Comment(props) {
   const {comment} = props;
+  const [cookies] = useCookies(['XSRF-TOKEN']);
   const posted = new Date(comment.postedTime);
 
   const onDelete = async function onDelete() {
-    await fetch(`/api/posts/${comment.postId}/comments/${comment.id}`, {method: 'DELETE'});
+    await fetch(`/api/posts/${comment.postId}/comments/${comment.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-XSRF-TOKEN': cookies['XSRF-TOKEN']
+      }
+    });
     // TODO: do this in a more React way
     window.location.reload();
   }
@@ -38,7 +46,7 @@ export function CommentForm(props) {
 
     const comment = {
       author: form.author.value,
-      content: form.author.value
+      content: form.content.value
     };
 
     const resp = await fetch(`/api/posts/${postId}/comments`, {

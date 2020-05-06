@@ -3,7 +3,7 @@ package me.aleksi.wordless
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder
 import java.time.Instant
@@ -13,6 +13,7 @@ import java.util.*
 class BlogController(private val postDao: PostDao, private val commentDao: CommentDao) {
     val logger: Logger = LoggerFactory.getLogger(BlogController::class.java)
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/api/posts")
     fun getPosts(@RequestParam query: String?): List<Post> {
         logger.debug("getPosts(query=$query)")
@@ -23,25 +24,28 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return postDao.getAllPosts()
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/api/posts/{id}")
     fun getPost(@PathVariable id: Long): ResponseEntity<Post> {
         logger.debug("getPost(id=$id)")
         return ResponseEntity.of(Optional.ofNullable(postDao.findById(id)))
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/api/posts/{postId}/comments")
     fun getComments(@PathVariable postId: Long): List<Comment> {
         logger.debug("getComments(postId=$postId)")
         return commentDao.getComments(postId)
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/api/posts/{postId}/comments/{id}")
     fun getComment(@PathVariable postId: Long, @PathVariable id: Long): ResponseEntity<Comment> {
         logger.debug("getComment(postId=$postId, id=$id)")
         return ResponseEntity.of(Optional.ofNullable(commentDao.getComment(id)))
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/api/posts/{id}")
     fun deletePost(@PathVariable id: Long): ResponseEntity<Unit> {
         logger.debug("deletePost(id=$id)")
@@ -49,7 +53,7 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.noContent().build()
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/api/posts/{postId}/comments/{id}")
     fun deleteComment(@PathVariable postId: Long, @PathVariable id: Long): ResponseEntity<Unit> {
         logger.debug("deleteComment(postId=$postId, id=$id)")
@@ -57,7 +61,7 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.noContent().build()
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/api/posts")
     fun createPost(@RequestBody post: PostRequest): ResponseEntity<Unit> {
         logger.debug("createPost")
@@ -73,7 +77,7 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.created(loc).build()
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("permitAll()")
     @PostMapping("/api/posts/{postId}/comments")
     fun createComment(@PathVariable postId: Long, @RequestBody comment: CommentRequest): ResponseEntity<Unit> {
         logger.debug("createComment")
@@ -89,7 +93,7 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.created(loc).build()
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/api/posts/{id}")
     fun updatePost(@PathVariable id: Long, @RequestBody post: PostRequest): ResponseEntity<Unit> {
         logger.debug("updatePost")

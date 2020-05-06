@@ -11,7 +11,6 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-        securedEnabled = true,
         prePostEnabled = true,
         proxyTargetClass = true)
 class SecurityConfiguration : WebSecurityConfigurerAdapter() {
@@ -23,12 +22,7 @@ class SecurityConfiguration : WebSecurityConfigurerAdapter() {
         http
                 .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .and()
-                .cors()
-                .and()
                 .httpBasic()
-                .and()
-                .authorizeRequests()
-                .anyRequest().anonymous()
                 .and()
                 .formLogin().disable()
     }
