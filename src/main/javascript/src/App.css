@@ -12,6 +12,18 @@ body {
     color: whitesmoke;
 }
 
+h1 {
+    font-size: 150%;
+}
+
+h2 {
+    font-size: 130%;
+}
+
+h3 {
+    font-size: 120%;
+}
+
 h1 a, h1 a:visited, h2 a, h2 a:visited {
     color: inherit;
     text-decoration: none;
@@ -25,7 +37,7 @@ a:hover, h1 a:hover, h2 a:hover {
     display: flex;
     flex-flow: wrap;
     align-content: flex-end;
-    justify-content: end;
+    justify-content: flex-end;
     padding: 1em;
 
     background-color: tan;
@@ -37,10 +49,18 @@ a:hover, h1 a:hover, h2 a:hover {
 #root > header > h1 {
     flex: 1 1 auto;
 
+    font-size: 180%;
+
     margin: 0;
     padding: 1em;
+}
 
-    text-align: center;
+#root > header img {
+    width: 40px;
+    height: auto;
+
+    vertical-align: text-bottom;
+    margin-right: 0.25em;
 }
 
 #root #search {
@@ -61,6 +81,10 @@ a:hover, h1 a:hover, h2 a:hover {
     color: black;
 }
 
+img {
+    max-width: 100%;
+}
+
 main {
     flex: 3 1 30em;
 
@@ -68,6 +92,10 @@ main {
 
     border-top: 1px solid #baaa8f;
     border-bottom: 1px solid #baaa8f;
+}
+
+.summaryBlock > header a:visited {
+    color: grey;
 }
 
 .summaryBlock > footer {

@@ -9,21 +9,22 @@ import {
   useLocation,
   useParams
 } from 'react-router-dom';
+import {useCookies} from 'react-cookie';
+import ReactMarkdown from 'react-markdown';
 import './App.css';
 import Sidebar from './Sidebar';
 import PostForm from './PostForm';
 import {Post, PostHeader} from './Post';
 import {TagList} from './Tags';
 import SearchBar from './SearchBar';
-import {useCookies} from 'react-cookie';
 
 function PostSummary(props) {
   const {post} = props;
   return <article className="summaryBlock">
     <PostHeader post={post}/>
 
-    <div className="summary">
-      {post.summary}
+    <div className="content">
+      <ReactMarkdown source={post.summary}/>
     </div>
 
     <footer>
@@ -76,8 +77,8 @@ function PostList() {
 
   return <Fragment>
     {posts.map((item, idx) => (
-      <Fragment>
-        <PostSummary key={item.id} post={item}/>
+      <Fragment key={item.id}>
+        <PostSummary post={item}/>
         {idx < posts.length - 1 && <hr/>}
       </Fragment>)
     )}
@@ -109,7 +110,12 @@ function PostControls() {
 function App() {
   return <Router>
     <header>
-      <h1><Link to="/">Spaghetti Forever</Link></h1>
+      <h1>
+        <Link to="/">
+          <img src={process.env.PUBLIC_URL + '/spaghetti.png'} alt="Spaghetti Forever logo"/>
+          Spaghetti Forever
+        </Link>
+      </h1>
       <SearchBar/>
     </header>
 
@@ -146,6 +152,11 @@ function App() {
               <Route exact path="/posts/new"/>
               <Route path={['/posts/:id-:slug', '/posts/:id']}>
                 <PostControls/>
+                <hr/>
+                <div>
+                  <h4>Tags</h4>
+                  <TagList/>
+                </div>
               </Route>
               <Route path="/">
                 <Link to="/posts/new">New Post</Link>

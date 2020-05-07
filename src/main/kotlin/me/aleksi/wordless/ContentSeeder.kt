@@ -8,6 +8,7 @@ class ContentSeeder(private val postDao: PostDao, private val commentDao: Commen
         val tagHello = tagDao.insert(Tag(name = "hello-world"))
         val tagLorem = tagDao.insert(Tag(name = "lorem-ipsum"))
         tagDao.insert(Tag(name = "unused"))
+        val tagCute = tagDao.insert(Tag(name = "cute-animals"))
 
         run {
             val title = "hello world"
@@ -30,7 +31,7 @@ class ContentSeeder(private val postDao: PostDao, private val commentDao: Commen
                         postId = id,
                         author = "aleksi",
                         postedTime = Instant.now(),
-                        content = "spam"))
+                        content = "## spam"))
             commentDao.insert(
                 Comment(id = 0,
                         postId = id,
@@ -49,7 +50,7 @@ class ContentSeeder(private val postDao: PostDao, private val commentDao: Commen
                                    postedTime = Instant.now(),
                                    editedTime = null,
                                    summary = "dolor sit amet",
-                                   content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+                                   content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n## Ut enim ad\n\nminim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
             val id = postDao.insert(createdPost)
 
             tagDao.addTagToPost(id, tagLorem)
@@ -59,7 +60,7 @@ class ContentSeeder(private val postDao: PostDao, private val commentDao: Commen
                         postId = id,
                         author = "aleksi",
                         postedTime = Instant.now(),
-                        content = "hello!"))
+                        content = "# hello!"))
         }
 
         run {
@@ -74,6 +75,29 @@ class ContentSeeder(private val postDao: PostDao, private val commentDao: Commen
                                    summary = "test summary",
                                    content = "test content")
             postDao.insert(createdPost)
+        }
+
+        run {
+            val title = "Look at this kitten!"
+            val createdPost = Post(id = 0,
+                                   title = title,
+                                   slug = title.slugify(),
+                                   public = true,
+                                   locked = true,
+                                   postedTime = Instant.now(),
+                                   editedTime = null,
+                                   summary = "## It's _so_ cute!",
+                                   content = "![alt text](https://placekitten.com/600/400 \"title text\")")
+            val id = postDao.insert(createdPost)
+
+            tagDao.addTagToPost(id, tagCute)
+
+            commentDao.insert(
+                Comment(id = 0,
+                        postId = id,
+                        author = "me",
+                        postedTime = Instant.now(),
+                        content = "# you're righT!\n\n![](https://placekitten.com/200/200)"))
         }
     }
 }

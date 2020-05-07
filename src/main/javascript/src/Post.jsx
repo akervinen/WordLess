@@ -1,5 +1,6 @@
 import {Link, useParams} from 'react-router-dom';
 import React, {Fragment, useEffect, useState} from 'react';
+import ReactMarkdown from 'react-markdown';
 import {CommentForm, CommentList} from './Comments';
 import './Post.css';
 import {TagList} from './Tags';
@@ -7,15 +8,14 @@ import {TagList} from './Tags';
 export function PostHeader(props) {
   const {post} = props;
   const posted = new Date(post.postedTime);
-  return (
-    <header>
-      <h2>
-        <Link to={`/posts/${post.id}-${post.slug}`}>{post.title}</Link>
-      </h2>
-      <p className="meta">
-        <time dateTime={posted.toISOString()}>{posted.toLocaleString()}</time>
-      </p>
-    </header>);
+  return <header>
+    <h1>
+      <Link to={`/posts/${post.id}-${post.slug}`}>{post.title}</Link>
+    </h1>
+    <p className="meta">
+      <time dateTime={posted.toISOString()}>{posted.toLocaleString()}</time>
+    </p>
+  </header>;
 }
 
 export function Post() {
@@ -50,11 +50,13 @@ export function Post() {
       <PostHeader post={post}/>
 
       <div className="content">
-        {post.content}
+        <ReactMarkdown source={post.summary}/>
+        <ReactMarkdown source={post.content}/>
       </div>
 
       <footer>
-        Tags: <TagList inline post={post}/>
+        {post?.tags?.length > 0 &&
+        <div>Tags: <TagList inline post={post}/></div>}
       </footer>
     </article>
 

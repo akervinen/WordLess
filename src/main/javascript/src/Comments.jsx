@@ -1,6 +1,7 @@
 import React from 'react';
-import './Comments.css';
 import {useCookies} from 'react-cookie';
+import ReactMarkdown from 'react-markdown';
+import './Comments.css';
 
 function Comment(props) {
   const {comment} = props;
@@ -31,7 +32,7 @@ function Comment(props) {
     </header>
 
     <div>
-      {comment.content}
+      <ReactMarkdown source={comment.content}/>
     </div>
   </div>;
 }
