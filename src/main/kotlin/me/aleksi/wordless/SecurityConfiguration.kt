@@ -11,8 +11,8 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-        prePostEnabled = true,
-        proxyTargetClass = true)
+    prePostEnabled = true,
+    proxyTargetClass = true)
 class SecurityConfiguration : WebSecurityConfigurerAdapter() {
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.inMemoryAuthentication().withUser("admin").password("{noop}admin").roles("ADMIN")
@@ -20,10 +20,10 @@ class SecurityConfiguration : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
         http
-                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .and()
-                .httpBasic()
-                .and()
-                .formLogin().disable()
+            .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            .and()
+            .httpBasic()
+            .and()
+            .formLogin().disable()
     }
 }

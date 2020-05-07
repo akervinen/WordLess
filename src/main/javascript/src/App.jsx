@@ -13,8 +13,8 @@ import './App.css';
 import Sidebar from './Sidebar';
 import PostForm from './PostForm';
 import {Post, PostHeader} from './Post';
-import SearchBar from "./SearchBar";
-import {useCookies} from "react-cookie";
+import SearchBar from './SearchBar';
+import {useCookies} from 'react-cookie';
 
 function PostSummary(props) {
   const {post} = props;
@@ -44,7 +44,7 @@ function PostList() {
   const [posts, setPosts] = useState([]);
 
   const query = useQuery();
-  const search = query.get("query");
+  const search = query.get('query');
 
   useEffect(() => {
     (async function fetchData() {
@@ -59,7 +59,7 @@ function PostList() {
     return null;
 
   if (!Array.isArray(posts))
-    return <h2>Error loading posts</h2>
+    return <h2>Error loading posts</h2>;
 
   if (!!search && posts.length === 0)
     return <h2>No posts found</h2>;
@@ -88,7 +88,7 @@ function PostControls() {
     });
     if (response.ok)
       history.replace('/');
-  }
+  };
 
   return <div id="controls">
     <Link to={`/posts/${!slug ? id : `${id}-${slug}`}/edit`}>Edit Post</Link>
@@ -114,12 +114,12 @@ function App() {
               {(post) => <Redirect to={`/posts/${post.id}`}/>}
             </PostForm>
           </Route>
-          <Route path={["/posts/:id-:slug/edit", "/posts/:id/edit"]}>
+          <Route path={['/posts/:id-:slug/edit', '/posts/:id/edit']}>
             <PostForm editPost>
               {(post) => <Redirect to={`/posts/${post.id}`}/>}
             </PostForm>
           </Route>
-          <Route path={["/posts/:id-:slug", "/posts/:id"]}>
+          <Route path={['/posts/:id-:slug', '/posts/:id']}>
             <Post/>
           </Route>
           <Route path="/">
@@ -134,7 +134,7 @@ function App() {
           <Sidebar>
             <Switch>
               <Route exact path="/posts/new"/>
-              <Route path={["/posts/:id-:slug", "/posts/:id"]}>
+              <Route path={['/posts/:id-:slug', '/posts/:id']}>
                 <PostControls/>
               </Route>
               <Route path="/">

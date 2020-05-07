@@ -1,22 +1,22 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import {useCookies} from 'react-cookie';
-import './PostForm.css'
+import './PostForm.css';
 
 export default function PostForm(props) {
   const {id} = useParams();
   const [cookies] = useCookies(['XSRF-TOKEN']);
 
-  const {editPost, children} = props
+  const {editPost, children} = props;
   const [shouldSubmit, setShouldSubmit] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [response, setResponse] = useState(null);
   const [post, setPost] = useState({
     id: id,
-    title: "",
+    title: '',
     public: true,
-    summary: "",
-    content: ""
+    summary: '',
+    content: ''
   });
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function PostForm(props) {
         return {
           ...prevState,
           ...data
-        }
+        };
       }));
     })();
   }, [id]);
@@ -62,7 +62,7 @@ export default function PostForm(props) {
         return {
           ...prevState,
           id: newId
-        }
+        };
       }));
     }
   }, [response]);
@@ -75,7 +75,7 @@ export default function PostForm(props) {
       return {
         ...prevState,
         [name]: value
-      }
+      };
     }));
   };
 
@@ -83,13 +83,13 @@ export default function PostForm(props) {
     evt.preventDefault();
 
     setShouldSubmit(true);
-  }
+  };
 
   if (response && post.id)
     return <Fragment>{children(post, response)}</Fragment>;
 
   return <Fragment>
-    <h2>{!id ? "New Post" : "Edit Post"}</h2>
+    <h2>{!id ? 'New Post' : 'Edit Post'}</h2>
     <form id="postForm" onSubmit={onSubmit.bind(this)}>
       <label>
         Title:

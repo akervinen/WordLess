@@ -10,7 +10,7 @@ export default function SearchBar() {
     const query = evt.currentTarget.query.value;
 
     history.push(`/search/?query=${query}`);
-  }
+  };
 
   return <div id="search">
     <form onSubmit={onSubmit}>

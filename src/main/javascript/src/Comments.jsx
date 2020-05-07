@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './Comments.css';
-import {useCookies} from "react-cookie";
+import {useCookies} from 'react-cookie';
 
 function Comment(props) {
   const {comment} = props;
@@ -17,7 +17,7 @@ function Comment(props) {
     });
     // TODO: do this in a more React way
     window.location.reload();
-  }
+  };
 
   return <div className="comment">
     <header>
@@ -61,7 +61,7 @@ export function CommentForm(props) {
       // TODO: do this in a more React way
       window.location.reload();
     }
-  }
+  };
 
   return <form id="commentForm" onSubmit={onSubmit}>
     <label>
@@ -77,7 +77,7 @@ export function CommentForm(props) {
                 required/>
     </label>
     <input type="submit" value="Post Comment"/>
-  </form>
+  </form>;
 }
 
 export function CommentList(props) {
@@ -98,7 +98,7 @@ export function CommentList(props) {
     return null;
 
   if (!Array.isArray(comments))
-    return <h2>Error loading comments</h2>
+    return <h2>Error loading comments</h2>;
 
   if (comments.length === 0)
     return <h3>No comments yet.</h3>;
