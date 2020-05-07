@@ -58,6 +58,17 @@ interface PostDao {
     fun findByTag(@Bind tagId: Long): List<Post>
 
     @SqlQuery("""
+        select $POST_COLUMNS, $COMMENT_COLUMNS, $TAG_COLUMNS from "post_tags" pt
+        inner join "post" p on pt."post_id" = p."id"
+        left join "tag" t on pt."tag_id" = t."id"
+        left join "comment" c on p."id" = c."post_id"
+        where t."name" = :tagName
+        order by p."posted_time" desc
+    """)
+    @UseRowReducer(PostWithExtras::class)
+    fun findByTagName(@Bind tagName: String): List<Post>
+
+    @SqlQuery("""
         select $POST_COLUMNS, $COMMENT_COLUMNS, $TAG_COLUMNS from "post" p
         left join "comment" c on p."id" = c."post_id"
         left join "post_tags" pt on p."id" = pt."post_id"
@@ -70,6 +81,20 @@ interface PostDao {
     """)
     @UseRowReducer(PostWithExtras::class)
     fun findByWord(@Bind query: String): List<Post>
+
+    @SqlQuery("""
+        select $POST_COLUMNS, $COMMENT_COLUMNS, $TAG_COLUMNS from "post" p
+        left join "comment" c on p."id" = c."post_id"
+        left join "post_tags" pt on p."id" = pt."post_id"
+        left join "tag" t on pt."tag_id" = t."id"
+        where t."name" = :tagName and (p."title" like concat('%',:query,'%')
+            or p."content" like concat('%',:query,'%')
+            or p."summary" like concat('%',:query,'%'))
+        group by p."id", p."posted_time", c."id", t."id"
+        order by p."posted_time" desc
+    """)
+    @UseRowReducer(PostWithExtras::class)
+    fun findByWordAndTag(@Bind query: String, @Bind tagName: String): List<Post>
 
     @SqlUpdate("""delete from "post" where "id"=(:id)""")
     fun deleteById(@Bind("id") id: Long)

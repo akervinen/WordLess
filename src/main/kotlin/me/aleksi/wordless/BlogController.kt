@@ -16,10 +16,14 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
 
     @PreAuthorize("permitAll()")
     @GetMapping("/api/posts")
-    fun getPosts(@RequestParam query: String?): List<Post> {
-        logger.debug("getPosts(query=$query)")
-        if (query != null) {
+    fun getPosts(@RequestParam query: String?, @RequestParam tag: String?): List<Post> {
+        logger.debug("getPosts(query=$query, tag=$tag)")
+        if (query != null && tag != null) {
+            return postDao.findByWordAndTag(query, tag)
+        } else if (query != null) {
             return postDao.findByWord(query)
+        } else if (tag != null) {
+            return postDao.findByTagName(tag)
         }
 
         return postDao.getAllPosts()
@@ -34,16 +38,18 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
 
     @PreAuthorize("permitAll()")
     @GetMapping("/api/posts/{postId}/tags")
-    fun getTags(@PathVariable postId: Long): List<Tag> {
+    fun getTags(@PathVariable postId: Long): ResponseEntity<List<Tag>> {
         logger.debug("getTags(postId=$postId)")
-        return tagDao.getTagsByPost(postId)
+        if (postDao.findById(postId) == null) return ResponseEntity.notFound().build()
+        return ResponseEntity.ok(tagDao.getTagsByPost(postId))
     }
 
     @PreAuthorize("permitAll()")
     @GetMapping("/api/posts/{postId}/comments")
-    fun getComments(@PathVariable postId: Long): List<Comment> {
+    fun getComments(@PathVariable postId: Long): ResponseEntity<List<Comment>> {
         logger.debug("getComments(postId=$postId)")
-        return commentDao.getComments(postId)
+        if (postDao.findById(postId) == null) return ResponseEntity.notFound().build()
+        return ResponseEntity.ok(commentDao.getComments(postId))
     }
 
     @PreAuthorize("permitAll()")

@@ -2,19 +2,33 @@
 GET http://localhost:8080/api/posts
 
 ### Find posts by query
-GET http://localhost:8080/api/posts?query=world hello
+GET http://localhost:8080/api/posts?query=lorem
+
+### Find posts by tag
+GET http://localhost:8080/api/posts?tag=hello-world
+
+### Find posts by both
+GET http://localhost:8080/api/posts?tag=lorem-ipsum&query=lorem
 
 ### Get one post
 GET http://localhost:8080/api/posts/1
 
-### Delete post
+### Delete post without authorization (error)
 DELETE http://localhost:8080/api/posts/1
+
+### Delete post with authorization
+DELETE http://localhost:8080/api/posts/3
+Authorization: Basic admin admin
 
 ### Get all comments in post
 GET http://localhost:8080/api/posts/1/comments
+
+### Get all tags in post
+GET http://localhost:8080/api/posts/1/tags
 
 ### Get one comment
 GET http://localhost:8080/api/posts/1/comments/1
 
 ### Delete comment
 DELETE http://localhost:8080/api/posts/1/comments/1
+Authorization: Basic admin admin
