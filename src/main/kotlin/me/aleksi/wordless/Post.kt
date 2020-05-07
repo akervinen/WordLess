@@ -2,12 +2,12 @@ package me.aleksi.wordless
 
 import java.time.Instant
 
-data class Post(val id: Long, val title: String,
-                val slug: String, val public: Boolean,
-                val locked: Boolean,
-                val postedTime: Instant, val editedTime: Instant?,
-                val summary: String, val content: String,
-                val commentCount: Int? = 0)
+data class Post(val id: Long = 0, val title: String = "",
+                val slug: String = "", val public: Boolean = true,
+                val locked: Boolean = false,
+                val postedTime: Instant = Instant.now(), val editedTime: Instant? = null,
+                val summary: String = "", val content: String = "",
+                val comments: MutableList<Comment>? = mutableListOf(), val tags: MutableList<Tag>? = mutableListOf())
 
 data class PostRequest(val title: String,
                        val public: Boolean, val locked: Boolean,

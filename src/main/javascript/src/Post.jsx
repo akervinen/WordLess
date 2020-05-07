@@ -55,12 +55,12 @@ export function Post() {
 
     <section id="comments">
       <h2>Comments</h2>
-      <CommentList postId={id} post={post}/>
+      <CommentList post={post}/>
 
       {post.locked
         ? <h3>Comments locked</h3>
         : <Fragment><h3>New Comment</h3>
-          <CommentForm postId={id} post={post}/></Fragment>}
+          <CommentForm post={post}/></Fragment>}
     </section>
   </Fragment>;
 }

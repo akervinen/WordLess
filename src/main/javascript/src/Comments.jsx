@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import './Comments.css';
 import {useCookies} from 'react-cookie';
 
@@ -37,7 +37,7 @@ function Comment(props) {
 }
 
 export function CommentForm(props) {
-  const {postId, post} = props;
+  const {post} = props;
 
   const onSubmit = async function onSubmit(evt) {
     evt.preventDefault();
@@ -49,7 +49,7 @@ export function CommentForm(props) {
       content: form.content.value
     };
 
-    const resp = await fetch(`/api/posts/${postId}/comments`, {
+    const resp = await fetch(`/api/posts/${post.id}/comments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -87,31 +87,19 @@ export function CommentForm(props) {
 }
 
 export function CommentList(props) {
-  const {postId} = props;
+  const {post} = props;
 
-  const [loading, setLoading] = useState(true);
-  const [comments, setComments] = useState([]);
-
-  useEffect(() => {
-    (async function fetchData() {
-      setLoading(true);
-      const result = await fetch(`/api/posts/${postId}/comments`);
-      setLoading(false);
-      setComments(result.ok ? await result.json() : null);
-    })();
-  }, [postId]);
-
-  if (loading)
+  if (!post)
     return <h3>Loading...</h3>;
 
-  if (!Array.isArray(comments))
+  if (!Array.isArray(post.comments))
     return <h3>Error loading comments</h3>;
 
-  if (comments.length === 0)
+  if (post.comments.length === 0)
     return <h3>No comments yet.</h3>;
 
   return <div id="commentList">
-    {comments.map(item => (
+    {post.comments.map(item => (
       <Comment key={item.id} comment={item}/>)
     )}
   </div>;

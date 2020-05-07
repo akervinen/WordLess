@@ -1,5 +1,7 @@
 -- noinspection SqlResolveForFile @ object-type/"serial"
 
+drop table if exists "post_tags";
+drop table if exists "tag";
 drop table if exists "comment";
 drop table if exists "post";
 
@@ -32,3 +34,19 @@ create table if not exists "comment"
 
 create index comment_post_id on "comment" (post_id);
 create index comment_posted_time on "comment" (posted_time);
+
+create table if not exists "tag"
+(
+    id   serial,
+    name varchar(50) not null,
+    primary key (id)
+);
+
+create table if not exists "post_tags"
+(
+    post_id serial,
+    tag_id  serial,
+    primary key (post_id, tag_id)
+);
+
+create index post_tags_reverse on "post_tags" (tag_id, post_id);

@@ -38,7 +38,12 @@ class Configuration {
     }
 
     @Bean
-    fun seeder(postDao: PostDao, commentDao: CommentDao): Seeder {
-        return ContentSeeder(postDao, commentDao)
+    fun getTagDao(jdbi: Jdbi): TagDao {
+        return jdbi.onDemand(TagDao::class.java)
+    }
+
+    @Bean
+    fun seeder(postDao: PostDao, commentDao: CommentDao, tagDao: TagDao): Seeder {
+        return ContentSeeder(postDao, commentDao, tagDao)
     }
 }

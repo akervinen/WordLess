@@ -11,7 +11,7 @@ import java.time.Instant
 import java.util.*
 
 @RestController
-class BlogController(private val postDao: PostDao, private val commentDao: CommentDao) {
+class BlogController(private val postDao: PostDao, private val commentDao: CommentDao, private val tagDao: TagDao) {
     val logger: Logger = LoggerFactory.getLogger(BlogController::class.java)
 
     @PreAuthorize("permitAll()")
@@ -30,6 +30,13 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
     fun getPost(@PathVariable id: Long): ResponseEntity<Post> {
         logger.debug("getPost(id=$id)")
         return ResponseEntity.of(Optional.ofNullable(postDao.findById(id)))
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/api/posts/{postId}/tags")
+    fun getTags(@PathVariable postId: Long): List<Tag> {
+        logger.debug("getTags(postId=$postId)")
+        return tagDao.getTagsByPost(postId)
     }
 
     @PreAuthorize("permitAll()")
