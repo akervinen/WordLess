@@ -24,11 +24,13 @@ interface PostDao {
     fun findById(@Bind("id") id: Long): Post?
 
     @SqlQuery("""
-        select p.* from "post" p
+        select p.*, count(c."post_id") as "comment_count" from "post" p
+        left join "comment" c on p."id" = c."post_id"
         where p."title" LIKE concat('%',:query,'%')
             OR p."content" LIKE concat('%',:query,'%')
             OR p."summary" LIKE concat('%',:query,'%')
-        order by "posted_time" desc
+        group by p."id", p."posted_time"
+        order by p."posted_time" desc
     """)
     fun findByWord(@Bind query: String): List<Post>
 
