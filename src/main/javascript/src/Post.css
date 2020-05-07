@@ -1,5 +1,5 @@
 article {
-    margin: 0 0 4em;
+    margin: 0 0 2em;
 }
 
 article > header {
@@ -30,7 +30,7 @@ article > header .meta {
 }
 
 article > footer {
-    margin: .5em 0 0;
+    margin: 2em 0 0;
 
     font-weight: lighter;
     font-size: 90%;

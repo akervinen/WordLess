@@ -1,2 +1,7 @@
-#search {
+#search input[type=text] {
+    height: 2em;
+}
+
+#search input[type=submit] {
+    height: 2.5em;
 }

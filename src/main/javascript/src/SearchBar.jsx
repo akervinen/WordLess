@@ -1,5 +1,6 @@
 import React from 'react';
 import {useHistory} from 'react-router-dom';
+import './SearchBar.css';
 
 export default function SearchBar() {
   const history = useHistory();

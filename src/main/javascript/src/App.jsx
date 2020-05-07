@@ -19,7 +19,7 @@ import {useCookies} from 'react-cookie';
 
 function PostSummary(props) {
   const {post} = props;
-  return <article>
+  return <article className="summaryBlock">
     <PostHeader post={post}/>
 
     <div className="summary">
@@ -75,8 +75,11 @@ function PostList() {
     return <h2>No posts yet</h2>;
 
   return <Fragment>
-    {posts.map(item => (
-      <PostSummary key={item.id} post={item}/>)
+    {posts.map((item, idx) => (
+      <Fragment>
+        <PostSummary key={item.id} post={item}/>
+        {idx < posts.length - 1 && <hr/>}
+      </Fragment>)
     )}
   </Fragment>;
 }

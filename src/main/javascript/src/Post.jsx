@@ -52,15 +52,19 @@ export function Post() {
       <div className="content">
         {post.content}
       </div>
+
+      <footer>
+        Tags: <TagList inline post={post}/>
+      </footer>
     </article>
 
-    <section id="postTags">
-      Tags: <TagList inline post={post}/>
-    </section>
+    <hr/>
 
     <section id="comments">
       <h2>Comments</h2>
       <CommentList post={post}/>
+
+      <hr/>
 
       {post.locked
         ? <h3>Comments locked</h3>
