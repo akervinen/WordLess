@@ -47,7 +47,9 @@ create table if not exists "post_tags"
 (
     post_id serial,
     tag_id  serial,
-    primary key (post_id, tag_id)
+    primary key (post_id, tag_id),
+    foreign key (post_id) references "post" (id) on delete cascade,
+    foreign key (tag_id) references "tag" (id) on delete cascade
 );
 
 create index post_tags_reverse on "post_tags" (tag_id, post_id);
