@@ -1,0 +1,17 @@
+.tagList {
+    margin-top: 0;
+}
+
+.inlineList {
+    display: inline-block;
+    margin-top: 0;
+}
+
+.inlineList li {
+    display: inline;
+    margin-right: 2em;
+}
+
+.inlineList li::before {
+    content: '· ';
+}

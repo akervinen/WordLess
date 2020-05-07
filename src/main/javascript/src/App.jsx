@@ -13,6 +13,7 @@ import './App.css';
 import Sidebar from './Sidebar';
 import PostForm from './PostForm';
 import {Post, PostHeader} from './Post';
+import {TagList} from './Tags';
 import SearchBar from './SearchBar';
 import {useCookies} from 'react-cookie';
 
@@ -44,16 +45,23 @@ function PostList() {
   const [posts, setPosts] = useState([]);
 
   const query = useQuery();
-  const search = query.get('query');
+  const querySearch = query.get('query');
+  const queryTag = query.get('tag');
+
+  let url = '/api/posts';
+  if (querySearch)
+    url += `?query=${querySearch}`;
+  if (queryTag)
+    url += (querySearch ? '&' : '?') + `tag=${queryTag}`;
 
   useEffect(() => {
     (async function fetchData() {
-      const result = await fetch(!search ? '/api/posts' : `/api/posts?query=${search}`);
+      const result = await fetch(url);
       console.log(result);
       setLoading(false);
       setPosts(result.ok ? await result.json() : null);
     })();
-  }, [search]);
+  }, [url]);
 
   if (loading)
     return null;
@@ -61,7 +69,7 @@ function PostList() {
   if (!Array.isArray(posts))
     return <h2>Error loading posts</h2>;
 
-  if (!!search && posts.length === 0)
+  if (!!querySearch && posts.length === 0)
     return <h2>No posts found</h2>;
 
   if (posts.length === 0)
@@ -141,6 +149,11 @@ function App() {
                 <Link to="/posts/new">New Post</Link>
               </Route>
             </Switch>
+            <hr/>
+            <div>
+              <h4>Tags</h4>
+              <TagList/>
+            </div>
           </Sidebar>
         </Route>
       </Switch>

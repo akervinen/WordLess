@@ -2,6 +2,7 @@ import {Link, useParams} from 'react-router-dom';
 import React, {Fragment, useEffect, useState} from 'react';
 import {CommentForm, CommentList} from './Comments';
 import './Post.css';
+import {PostTagList} from './Tags';
 
 export function PostHeader(props) {
   const {post} = props;
@@ -52,6 +53,10 @@ export function Post() {
         {post.content}
       </div>
     </article>
+
+    <section id="postTags">
+      Tags: <PostTagList inline post={post}/>
+    </section>
 
     <section id="comments">
       <h2>Comments</h2>

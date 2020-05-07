@@ -30,6 +30,13 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
     }
 
     @PreAuthorize("permitAll()")
+    @GetMapping("/api/tags")
+    fun getTags(): List<Tag> {
+        logger.debug("getTags()")
+        return tagDao.getAllUsed()
+    }
+
+    @PreAuthorize("permitAll()")
     @GetMapping("/api/posts/{id}")
     fun getPost(@PathVariable id: Long): ResponseEntity<Post> {
         logger.debug("getPost(id=$id)")
