@@ -38,7 +38,7 @@ create index comment_posted_time on "comment" (posted_time);
 create table if not exists "tag"
 (
     id   serial,
-    name varchar(50) not null,
+    name varchar(50) not null unique,
     primary key (id)
 );
 

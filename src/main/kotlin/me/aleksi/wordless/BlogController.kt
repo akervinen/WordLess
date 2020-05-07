@@ -98,6 +98,8 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
                                content = post.content)
         val id = postDao.insert(createdPost)
 
+        post.tags?.let { tagDao.setPostTags(id, it) }
+
         val loc = MvcUriComponentsBuilder
             .fromMethodName(javaClass, "getPost", id)
             .buildAndExpand(id)
@@ -147,6 +149,8 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
                                summary = post.summary,
                                content = post.content)
         postDao.update(id, updatedPost)
+
+        post.tags?.let { tagDao.setPostTags(id, it) }
 
         return ResponseEntity.noContent().build()
     }

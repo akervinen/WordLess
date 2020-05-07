@@ -3,12 +3,22 @@ import {useParams} from 'react-router-dom';
 import {useCookies} from 'react-cookie';
 import './PostForm.css';
 
+function tagsToString(tags) {
+  return tags?.join(' ');
+}
+
+function stringToTags(str) {
+  return str?.split(/\s+/);
+}
+
 export default function PostForm(props) {
   const {id} = useParams();
   const [cookies] = useCookies(['XSRF-TOKEN']);
 
   const {editPost, children} = props;
+  // If true, submit was clicked but no form was sent yet
   const [shouldSubmit, setShouldSubmit] = useState(false);
+  // Once form is sent, this is true
   const [submitted, setSubmitted] = useState(false);
   const [response, setResponse] = useState(null);
   const [post, setPost] = useState({
@@ -17,7 +27,8 @@ export default function PostForm(props) {
     public: true,
     locked: false,
     summary: '',
-    content: ''
+    content: '',
+    tags: []
   });
 
   useEffect(() => {
@@ -25,11 +36,14 @@ export default function PostForm(props) {
     (async function fetchData() {
       const result = await fetch(`/api/posts/${id}`);
       const data = result.ok ? await result.json() : {};
+      // Only overwrite existing properties, don't create new ones.
+      // This is to avoid getting unneeded properties in state, like post comments.
       setPost((prevState => {
-        return {
-          ...prevState,
-          ...data
-        };
+        let newState = Object.assign({}, prevState);
+        for (const prop in prevState) {
+          newState[prop] = data[prop];
+        }
+        return newState;
       }));
     })();
   }, [id]);
@@ -70,7 +84,11 @@ export default function PostForm(props) {
 
   const onChange = function onChange(evt) {
     const target = evt.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+    let value = target.value;
+    if (target.name === 'tags')
+      value = stringToTags(target.value);
+    if (target.type === 'checkbox')
+      value = target.checked;
     const name = target.name;
     setPost((prevState => {
       return {
@@ -113,7 +131,15 @@ export default function PostForm(props) {
         Locked:
         <input name="locked"
                type="checkbox"
-               checked={post['locked']}
+               checked={post.locked}
+               onChange={onChange}/>
+      </label>
+      <label>
+        Tags, separate by spaces:
+        <input name="tags"
+               type="text"
+               placeholder="List of tags, separated by spaces"
+               value={tagsToString(post.tags)}
                onChange={onChange}/>
       </label>
       <label>

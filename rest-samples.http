@@ -1,6 +1,9 @@
 ### Get all posts
 GET http://localhost:8080/api/posts
 
+### Get all tags
+GET http://localhost:8080/api/tags
+
 ### Find posts by query
 GET http://localhost:8080/api/posts?query=lorem
 

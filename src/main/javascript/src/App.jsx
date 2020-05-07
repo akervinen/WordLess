@@ -147,13 +147,13 @@ function App() {
               </Route>
               <Route path="/">
                 <Link to="/posts/new">New Post</Link>
+                <hr/>
+                <div>
+                  <h4>Tags</h4>
+                  <TagList/>
+                </div>
               </Route>
             </Switch>
-            <hr/>
-            <div>
-              <h4>Tags</h4>
-              <TagList/>
-            </div>
           </Sidebar>
         </Route>
       </Switch>

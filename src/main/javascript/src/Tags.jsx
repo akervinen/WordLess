@@ -5,33 +5,31 @@ import './Tags.css';
 
 export function Tag(props) {
   const {tag} = props;
-  return <Link to={`/search/?tag=${tag.name}`} className="tag">
-    #{tag.name}
+  return <Link to={`/search/?tag=${tag}`} className="tag">
+    #{tag}
   </Link>;
-}
-
-export function PostTagList(props) {
-  const {inline, post} = props;
-
-  return <ul className={inline ? 'inlineList' : 'tagList'}>
-    {post.tags.map(tag => <li><Tag tag={tag}/></li>)}
-  </ul>;
 }
 
 export function TagList(props) {
   const [tags, setTags] = useState([]);
 
-  const {inline} = props;
+  const {inline, post} = props;
 
   useEffect(() => {
     (async function getTags() {
+      if (post) {
+        setTags(post.tags);
+        return;
+      }
       let response = await fetch('/api/tags');
       if (response.ok)
-        setTags(await response.json());
+        setTags((await response.json()).map(t => t.name));
     })();
-  });
+  }, [post]);
+
+  console.log(post, tags);
 
   return <ul className={inline ? 'inlineList' : 'tagList'}>
-    {tags.map(tag => <li><Tag tag={tag}/></li>)}
+    {tags.map(tag => <li key={tag}><Tag tag={tag}/></li>)}
   </ul>;
 }

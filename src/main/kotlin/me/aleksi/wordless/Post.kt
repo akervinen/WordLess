@@ -7,8 +7,9 @@ data class Post(val id: Long = 0, val title: String = "",
                 val locked: Boolean = false,
                 val postedTime: Instant = Instant.now(), val editedTime: Instant? = null,
                 val summary: String = "", val content: String = "",
-                val comments: MutableList<Comment>? = mutableListOf(), val tags: MutableList<Tag>? = mutableListOf())
+                val comments: MutableList<Comment>? = mutableListOf(), val tags: MutableList<String>? = mutableListOf())
 
 data class PostRequest(val title: String,
                        val public: Boolean, val locked: Boolean,
-                       val summary: String, val content: String)
+                       val summary: String, val content: String,
+                       val tags: List<String>?)

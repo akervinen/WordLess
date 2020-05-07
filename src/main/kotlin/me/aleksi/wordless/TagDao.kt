@@ -22,6 +22,12 @@ interface TagDao {
     fun getAllUsed(): List<Tag>
 
     @SqlQuery("""
+        select t.* from "tag" t
+        where t."name" = :tagName
+    """)
+    fun getTagByName(@Bind tagName: String): Tag?
+
+    @SqlQuery("""
         select t.* from "post_tags" pt
         inner join "tag" t on pt."tag_id" = t."id"
         where "post_id" = :postId
@@ -29,11 +35,35 @@ interface TagDao {
     """)
     fun getTagsByPost(@Bind postId: Long): List<Tag>
 
+    fun setPostTags(postId: Long, tags: List<String>) {
+        removeTagsFromPost(postId)
+        tags.filter { it.length in 2..49 }.forEach {
+            addTagToPost(postId, it)
+        }
+    }
+
     @SqlUpdate("""
         insert into "post_tags" ("post_id", "tag_id")
         values (:postId, :tagId)
     """)
     fun addTagToPost(@Bind postId: Long, @Bind tagId: Long)
+
+    private fun addTagToPost(postId: Long, tagName: String) {
+        val tagId = getTagByName(tagName)?.id ?: insert(Tag(name = tagName))
+        return addTagToPost(postId, tagId)
+    }
+
+    @SqlUpdate("""
+        delete from "post_tags"
+        where "post_id" = :postId and "tag_id" = :tagId
+    """)
+    fun removeTagFromPost(@Bind postId: Long, @Bind tagId: Long)
+
+    @SqlUpdate("""
+        delete from "post_tags"
+        where "post_id" = :postId
+    """)
+    fun removeTagsFromPost(@Bind postId: Long)
 
     @SqlUpdate("""
         insert into "tag" ("name")

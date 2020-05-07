@@ -134,8 +134,8 @@ interface PostDao {
 
             if (rowView.getColumn("t_id", Long::class.javaObjectType) != null) {
                 rowView.getRow(Tag::class.java).let { tag ->
-                    if (post.tags?.none { it.id == tag.id } != false) {
-                        post.tags?.add(tag)
+                    if (post.tags?.none { it == tag.name } != false) {
+                        post.tags?.add(tag.name)
                     }
                 }
             }
