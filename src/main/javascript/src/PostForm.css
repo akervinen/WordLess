@@ -18,11 +18,11 @@
     height: 2em;
 }
 
-#postForm > #publicLabel {
+#postForm > .singleLine {
     flex-flow: row;
 }
 
-#postForm input[name=public] {
+#postForm input[type=checkbox] {
     align-self: start;
     margin: auto auto auto 3em;
 }

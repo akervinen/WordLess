@@ -38,8 +38,8 @@ interface PostDao {
     fun deleteById(@Bind("id") id: Long)
 
     @SqlUpdate("""
-        insert into "post" ("title", "slug", "public", "posted_time", "edited_time", "summary", "content")
-        values (:title, :slug, :public, :postedTime, :editedTime, :summary, :content)
+        insert into "post" ("title", "slug", "public", "locked", "posted_time", "edited_time", "summary", "content")
+        values (:title, :slug, :public, :locked, :postedTime, :editedTime, :summary, :content)
     """)
     @GetGeneratedKeys
     fun insert(@BindBean post: Post): Long
@@ -48,6 +48,7 @@ interface PostDao {
         update "post"
         set "title" = :title,
             "public" = :public,
+            "locked" = :locked,
             "summary" = :summary,
             "content" = :content,
             "edited_time" = :editedTime

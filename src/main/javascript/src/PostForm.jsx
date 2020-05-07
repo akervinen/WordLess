@@ -15,6 +15,7 @@ export default function PostForm(props) {
     id: id,
     title: '',
     public: true,
+    locked: false,
     summary: '',
     content: ''
   });
@@ -69,7 +70,7 @@ export default function PostForm(props) {
 
   const onChange = function onChange(evt) {
     const target = evt.target;
-    const value = target.name === 'public' ? target.checked : target.value;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
     setPost((prevState => {
       return {
@@ -101,11 +102,18 @@ export default function PostForm(props) {
                required
                maxLength={200}/>
       </label>
-      <label id="publicLabel">
+      <label className="singleLine">
         Public:
         <input name="public"
                type="checkbox"
                checked={post['public']}
+               onChange={onChange}/>
+      </label>
+      <label className="singleLine">
+        Locked:
+        <input name="locked"
+               type="checkbox"
+               checked={post['locked']}
                onChange={onChange}/>
       </label>
       <label>

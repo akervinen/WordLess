@@ -2,6 +2,7 @@ package me.aleksi.wordless
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -66,13 +67,21 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
     fun createPost(@RequestBody post: PostRequest): ResponseEntity<Unit> {
         logger.debug("createPost")
 
-        val createdPost = Post(0, post.title, post.title.slugify(), post.public, Instant.now(), null, post.summary, post.content)
+        val createdPost = Post(id = 0,
+                               title = post.title,
+                               slug = post.title.slugify(),
+                               public = post.public,
+                               locked = false,
+                               postedTime = Instant.now(),
+                               editedTime = null,
+                               summary = post.summary,
+                               content = post.content)
         val id = postDao.insert(createdPost)
 
         val loc = MvcUriComponentsBuilder
-                .fromMethodName(javaClass, "getPost", id)
-                .buildAndExpand(id)
-                .toUri()
+            .fromMethodName(javaClass, "getPost", id)
+            .buildAndExpand(id)
+            .toUri()
 
         return ResponseEntity.created(loc).build()
     }
@@ -82,13 +91,21 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
     fun createComment(@PathVariable postId: Long, @RequestBody comment: CommentRequest): ResponseEntity<Unit> {
         logger.debug("createComment")
 
-        val created = Comment(0, postId, comment.author, Instant.now(), comment.content)
+        // Make sure post exists and isn't locked
+        val post = postDao.findById(postId) ?: return ResponseEntity.notFound().build()
+        if (post.locked) return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+
+        val created = Comment(id = 0,
+                              postId = postId,
+                              author = comment.author,
+                              postedTime = Instant.now(),
+                              content = comment.content)
         val id = commentDao.insert(created)
 
         val loc = MvcUriComponentsBuilder
-                .fromMethodName(javaClass, "getComment", postId, id)
-                .buildAndExpand(postId, id)
-                .toUri()
+            .fromMethodName(javaClass, "getComment", postId, id)
+            .buildAndExpand(postId, id)
+            .toUri()
 
         return ResponseEntity.created(loc).build()
     }
@@ -100,14 +117,15 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
 
         val original = postDao.findById(id) ?: return ResponseEntity.notFound().build()
 
-        val updatedPost = Post(id,
-                post.title,
-                post.title.slugify(),
-                post.public,
-                original.postedTime,
-                Instant.now(),
-                post.summary,
-                post.content)
+        val updatedPost = Post(id = id,
+                               title = post.title,
+                               slug = post.title.slugify(),
+                               public = post.public,
+                               locked = post.locked,
+                               postedTime = original.postedTime,
+                               editedTime = Instant.now(),
+                               summary = post.summary,
+                               content = post.content)
         postDao.update(id, updatedPost)
 
         return ResponseEntity.noContent().build()

@@ -37,7 +37,7 @@ function Comment(props) {
 }
 
 export function CommentForm(props) {
-  const {postId} = props;
+  const {postId, post} = props;
 
   const onSubmit = async function onSubmit(evt) {
     evt.preventDefault();
@@ -62,6 +62,12 @@ export function CommentForm(props) {
       window.location.reload();
     }
   };
+
+  if (!post)
+    return <h3>Loading...</h3>;
+
+  if (post.locked)
+    return <h3>Comments locked</h3>;
 
   return <form id="commentForm" onSubmit={onSubmit}>
     <label>
@@ -88,6 +94,7 @@ export function CommentList(props) {
 
   useEffect(() => {
     (async function fetchData() {
+      setLoading(true);
       const result = await fetch(`/api/posts/${postId}/comments`);
       setLoading(false);
       setComments(result.ok ? await result.json() : null);
@@ -95,10 +102,10 @@ export function CommentList(props) {
   }, [postId]);
 
   if (loading)
-    return null;
+    return <h3>Loading...</h3>;
 
   if (!Array.isArray(comments))
-    return <h2>Error loading comments</h2>;
+    return <h3>Error loading comments</h3>;
 
   if (comments.length === 0)
     return <h3>No comments yet.</h3>;
