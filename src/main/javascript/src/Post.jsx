@@ -1,4 +1,4 @@
-import {Link, useHistory, useLocation, useParams} from 'react-router-dom';
+import {Link, Redirect, useLocation, useParams} from 'react-router-dom';
 import React, {Fragment, useContext, useEffect, useState} from 'react';
 import {useCookies} from 'react-cookie';
 import ReactMarkdown from 'react-markdown';
@@ -88,25 +88,41 @@ export function PostList() {
 }
 
 export function PostControls() {
-  const history = useHistory();
   const [cookies] = useCookies(['XSRF-TOKEN']);
+  const [post, setPost] = useContext(PostContext);
 
-  const [post] = useContext(PostContext);
+  const [deleteClicked, setDeleteClicked] = useState(false);
+  const [deleted, setDeleted] = useState(false);
 
-  const deletePost = async () => {
-    const response = await fetch(`/api/posts/${post.id}`, {
-      method: 'DELETE',
-      headers: {
-        'X-XSRF-TOKEN': cookies['XSRF-TOKEN']
-      }
-    });
-    if (response.ok)
-      history.replace('/');
+  const onClick = async () => {
+    if (window.confirm('Are you sure you want to delete this post?')) {
+      setDeleteClicked(true);
+    }
   };
+  useEffect(() => {
+    (async function deletePost() {
+      if (!deleteClicked || !post) return;
+      setDeleteClicked(false);
+      const response = await fetch(`/api/posts/${post.id}`, {
+        method: 'DELETE',
+        headers: {
+          'X-XSRF-TOKEN': cookies['XSRF-TOKEN']
+        }
+      });
+      if (response.ok) {
+        setDeleted(true);
+        setPost(null);
+      }
+    })();
+  }, [deleteClicked, deleted, post, setPost, cookies]);
+
+  if (deleted) {
+    return <Redirect to="/"/>;
+  }
 
   return <div id="controls">
     <Link to={`/posts/${!post?.slug ? post?.id : `${post?.id}-${post?.slug}`}/edit`}>Edit Post</Link>
-    <button onClick={deletePost}>Delete Post</button>
+    <button onClick={onClick}>Delete Post</button>
   </div>;
 }
 
