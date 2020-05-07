@@ -50,16 +50,6 @@ interface PostDao {
     @SqlQuery("""
         select $POST_COLUMNS, $COMMENT_COLUMNS, $TAG_COLUMNS from "post_tags" pt
         inner join "post" p on pt."post_id" = p."id"
-        left join "comment" c on p."id" = c."post_id"
-        where "tag_id" = :tagId
-        order by p."posted_time" desc
-    """)
-    @UseRowReducer(PostWithExtras::class)
-    fun findByTag(@Bind tagId: Long): List<Post>
-
-    @SqlQuery("""
-        select $POST_COLUMNS, $COMMENT_COLUMNS, $TAG_COLUMNS from "post_tags" pt
-        inner join "post" p on pt."post_id" = p."id"
         left join "tag" t on pt."tag_id" = t."id"
         left join "comment" c on p."id" = c."post_id"
         where t."name" = :tagName

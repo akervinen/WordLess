@@ -27,8 +27,6 @@ export function TagList(props) {
     })();
   }, [post]);
 
-  console.log(post, tags);
-
   return <ul className={inline ? 'inlineList' : 'tagList'}>
     {tags.map(tag => <li key={tag}><Tag tag={tag}/></li>)}
   </ul>;

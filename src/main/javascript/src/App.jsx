@@ -57,7 +57,6 @@ function PostList() {
   useEffect(() => {
     (async function fetchData() {
       const result = await fetch(url);
-      console.log(result);
       setLoading(false);
       setPosts(result.ok ? await result.json() : null);
     })();

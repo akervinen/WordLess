@@ -1,5 +1,5 @@
 #sidebar {
-    flex: 0 1 auto;
+    flex: 1 1 content;
 
     padding: 1em .5em;
     width: 10em;

@@ -23,19 +23,29 @@ a:hover, h1 a:hover, h2 a:hover {
 
 #root > header {
     display: flex;
+    flex-flow: wrap;
+    align-content: flex-end;
+    justify-content: end;
     padding: 1em;
 
     background-color: tan;
     color: black;
+    text-align: center;
 
     border-bottom: 1px solid #baaa8f;
 }
 
 #root > header > h1 {
-    flex: 1 0 auto;
+    flex: 1 1 auto;
 
     margin: 0;
     padding: 1em;
+}
+
+#root #search {
+    flex: 0 1 auto;
+    flex-basis: auto;
+    align-self: end;
 }
 
 #root > footer {
@@ -51,7 +61,7 @@ a:hover, h1 a:hover, h2 a:hover {
 }
 
 main {
-    flex: 1 2 30em;
+    flex: 3 1 30em;
 
     padding: 1em .5em 1em 1em;
 }

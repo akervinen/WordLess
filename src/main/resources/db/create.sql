@@ -41,6 +41,7 @@ create table if not exists "tag"
     name varchar(50) not null unique,
     primary key (id)
 );
+create index tag_name on "tag" (name);
 
 create table if not exists "post_tags"
 (
