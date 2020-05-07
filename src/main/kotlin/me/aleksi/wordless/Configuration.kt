@@ -1,5 +1,6 @@
 package me.aleksi.wordless
 
+import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.spring4.JdbiFactoryBean
 import org.springframework.boot.web.server.ConfigurableWebServerFactory
 import org.springframework.boot.web.server.ErrorPage
@@ -24,5 +25,20 @@ class Configuration {
         return WebServerFactoryCustomizer<ConfigurableWebServerFactory> { factory ->
             factory?.addErrorPages(ErrorPage(HttpStatus.NOT_FOUND, "/"))
         }
+    }
+
+    @Bean
+    fun getPostDao(jdbi: Jdbi): PostDao {
+        return jdbi.onDemand(PostDao::class.java)
+    }
+
+    @Bean
+    fun getCommentDao(jdbi: Jdbi): CommentDao {
+        return jdbi.onDemand(CommentDao::class.java)
+    }
+
+    @Bean
+    fun seeder(postDao: PostDao, commentDao: CommentDao): Seeder {
+        return ContentSeeder(postDao, commentDao)
     }
 }
