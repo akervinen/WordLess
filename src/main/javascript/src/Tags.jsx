@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
+import {PostContext} from './PostContext';
 
 import './Tags.css';
 
@@ -13,11 +14,13 @@ export function Tag(props) {
 export function TagList(props) {
   const [tags, setTags] = useState([]);
 
-  const {inline, post} = props;
+  const [post] = useContext(PostContext);
+
+  const {inline, postOnly} = props;
 
   useEffect(() => {
     (async function getTags() {
-      if (post) {
+      if (post && postOnly) {
         setTags(post.tags);
         return;
       }
@@ -25,7 +28,7 @@ export function TagList(props) {
       if (response.ok)
         setTags((await response.json()).map(t => t.name));
     })();
-  }, [post]);
+  }, [post, postOnly]);
 
   return <ul className={inline ? 'inlineList' : 'tagList'}>
     {tags.map(tag => <li key={tag}><Tag tag={tag}/></li>)}

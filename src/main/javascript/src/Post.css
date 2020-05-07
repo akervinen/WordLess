@@ -35,3 +35,45 @@ article > footer {
     font-weight: lighter;
     font-size: 90%;
 }
+
+.summaryBlock > header a:visited {
+    color: grey;
+}
+
+.summaryBlock > footer {
+    padding-top: 16px;
+}
+
+.summaryBlock > footer > a {
+    padding: 16px 8px;
+}
+
+#controls > * {
+    display: block;
+    margin-bottom: 1em;
+}
+
+#controls button {
+    display: block;
+
+    padding: 0;
+    width: 100%;
+    text-align: left;
+
+    background: none;
+    color: #069;
+    border: none;
+
+    font-family: 'Lato', sans-serif;
+    font-size: 1em;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#controls button:hover {
+    color: violet;
+}
+
+#controls button:active {
+    color: red;
+}
