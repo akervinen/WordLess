@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 
-import './Tags.css';
+import './TagList.css';
 
-export function Tag({tag}) {
+function Tag({tag}) {
   return <Link to={`/tags/${tag}`} className="tag">
     #{tag}
   </Link>;

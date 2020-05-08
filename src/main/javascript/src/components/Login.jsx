@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Redirect} from 'react-router-dom';
-import useAuth from './context/AuthContext';
+import useAuth from '../context/AuthContext';
 
 import './Login.css';
 
@@ -10,7 +10,6 @@ export function LogoutPage() {
   useEffect(() => {
     if (!authed) return;
     (async function logout() {
-      console.log('logging out...');
       const response = await fetch(`/api/logout`, {
         method: 'POST'
       });

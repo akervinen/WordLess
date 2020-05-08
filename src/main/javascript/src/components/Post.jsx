@@ -3,7 +3,7 @@ import React, {Fragment, useContext, useEffect, useState} from 'react';
 import {useCookies} from 'react-cookie';
 import ReactMarkdown from 'react-markdown';
 import {CommentForm, CommentList} from './Comments';
-import {PostContext} from './context/PostContext';
+import {PostContext} from '../context/PostContext';
 
 import './Post.css';
 

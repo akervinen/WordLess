@@ -1,17 +1,19 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import {BrowserRouter as Router, Link, Redirect, Route, Switch, useLocation, useParams} from 'react-router-dom';
+import {useCookies} from 'react-cookie';
 
 import './App.css';
 
-import {Post, PostControls, PostList} from './Post';
-import PostForm from './PostForm';
-import {TagList} from './Tags';
-import SearchBar from './SearchBar';
-import Sidebar from './Sidebar';
 import {PostContext} from './context/PostContext';
-import {LoginForm, LogoutPage} from './Login';
 import useAuth, {AuthContext} from './context/AuthContext';
-import {useCookies} from 'react-cookie';
+
+import {Post, PostControls, PostList} from './components/Post';
+import PostForm from './components/PostForm';
+import {TagList} from './components/TagList';
+import SearchBar from './components/SearchBar';
+import Sidebar from './components/Sidebar';
+import {LoginForm, LogoutPage} from './components/Login';
+import {PrivateFragment, PrivateRoute} from './components/Private';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -114,16 +116,6 @@ function SidebarContent({post}) {
       <TagList/>
     </div>
   </Fragment>;
-}
-
-function PrivateFragment(props) {
-  const [authed] = useAuth();
-  return authed ? <Fragment {...props}/> : null;
-}
-
-function PrivateRoute(props) {
-  const [authed] = useAuth();
-  return authed ? <Route {...props} /> : <Redirect to="/"/>;
 }
 
 function UserPanel() {

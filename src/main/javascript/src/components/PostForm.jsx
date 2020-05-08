@@ -11,17 +11,16 @@ function stringToTags(str) {
   return str?.split(/\s+/);
 }
 
-export default function PostForm(props) {
+export default function PostForm({editPost, children}) {
   const {id} = useParams();
   const [cookies] = useCookies(['XSRF-TOKEN']);
 
-  const {editPost, children} = props;
   // If true, submit was clicked but no form was sent yet
   const [shouldSubmit, setShouldSubmit] = useState(false);
   // Once form is sent, this is true
   const [submitted, setSubmitted] = useState(false);
   const [response, setResponse] = useState(null);
-  const [post, setPost] = useState({
+  const [postData, setPostData] = useState({
     id: id,
     title: '',
     public: true,
@@ -31,6 +30,7 @@ export default function PostForm(props) {
     tags: []
   });
 
+  //
   useEffect(() => {
     if (!id) return;
     (async function fetchData() {
@@ -38,7 +38,7 @@ export default function PostForm(props) {
       const data = result.ok ? await result.json() : {};
       // Only overwrite existing properties, don't create new ones.
       // This is to avoid getting unneeded properties in state, like post comments.
-      setPost((prevState => {
+      setPostData((prevState => {
         let newState = Object.assign({}, prevState);
         for (const prop in prevState) {
           newState[prop] = data[prop];
@@ -61,19 +61,21 @@ export default function PostForm(props) {
           'Content-Type': 'application/json',
           'X-XSRF-TOKEN': cookies['XSRF-TOKEN']
         },
-        body: JSON.stringify(post)
+        body: JSON.stringify(postData)
       });
       setResponse(response);
     })();
-  }, [submitUrl, submitMethod, shouldSubmit, submitted, post, cookies]);
+  }, [submitUrl, submitMethod, shouldSubmit, submitted, postData, cookies]);
 
+  // This useEffect grabs the Location header and finds the new
+  // post id from it.
   useEffect(() => {
     if (!response) return;
     if (response.status === 201) {
       let loc = response.headers.get('Location');
       let lastSlash = loc.lastIndexOf('/');
       let newId = Number(loc.substr(lastSlash + 1));
-      setPost((prevState => {
+      setPostData((prevState => {
         return {
           ...prevState,
           id: newId
@@ -90,7 +92,7 @@ export default function PostForm(props) {
     if (target.type === 'checkbox')
       value = target.checked;
     const name = target.name;
-    setPost((prevState => {
+    setPostData((prevState => {
       return {
         ...prevState,
         [name]: value
@@ -104,8 +106,8 @@ export default function PostForm(props) {
     setShouldSubmit(true);
   };
 
-  if (response && post.id)
-    return <Fragment>{children(post, response)}</Fragment>;
+  if (response && postData.id)
+    return <Fragment>{children(postData, response)}</Fragment>;
 
   return <Fragment>
     <h2>{!id ? 'New Post' : 'Edit Post'}</h2>
@@ -115,7 +117,7 @@ export default function PostForm(props) {
         <input name="title"
                type="text"
                placeholder="Enter title here"
-               value={post.title}
+               value={postData.title}
                onChange={onChange}
                required
                maxLength={200}/>
@@ -124,14 +126,14 @@ export default function PostForm(props) {
         Public:
         <input name="public"
                type="checkbox"
-               checked={post['public']}
+               checked={postData['public']}
                onChange={onChange}/>
       </label>
       <label className="singleLine">
         Locked:
         <input name="locked"
                type="checkbox"
-               checked={post.locked}
+               checked={postData.locked}
                onChange={onChange}/>
       </label>
       <label>
@@ -139,7 +141,7 @@ export default function PostForm(props) {
         <input name="tags"
                type="text"
                placeholder="List of tags, separated by spaces"
-               value={tagsToString(post.tags)}
+               value={tagsToString(postData.tags)}
                onChange={onChange}/>
       </label>
       <label>
@@ -147,7 +149,7 @@ export default function PostForm(props) {
         <textarea name="summary"
                   placeholder="Enter post summary here"
                   required
-                  value={post.summary}
+                  value={postData.summary}
                   onChange={onChange}/>
       </label>
       <label>
@@ -155,7 +157,7 @@ export default function PostForm(props) {
         <textarea name="content"
                   placeholder="Enter post content here"
                   required
-                  value={post.content}
+                  value={postData.content}
                   onChange={onChange}/>
       </label>
       <input type="submit" value={!id ? 'Create' : 'Edit'}/>
