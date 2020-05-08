@@ -1,0 +1,40 @@
+#loginForm {
+    display: flex;
+    flex-flow: column;
+}
+
+#loginForm > * {
+    display: flex;
+
+    flex: 0 0 auto;
+    flex-flow: wrap;
+
+    margin: .5em 0;
+}
+
+#loginForm > label > span {
+    flex: 0 0 10em;
+    align-self: center;
+}
+
+#loginForm > label > input {
+    flex: 0 1 20em;
+    height: 2em;
+
+    text-align: left;
+
+    align-self: flex-start;
+    justify-self: flex-start;
+}
+
+#loginForm > label > input[type=checkbox] {
+    flex: 0 0 auto;
+    height: 2em;
+}
+
+#loginForm > input[type=submit] {
+    width: 10em;
+    height: 3em;
+
+    align-self: flex-start;
+}

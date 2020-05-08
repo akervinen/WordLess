@@ -14,6 +14,11 @@ import java.util.*
 class BlogController(private val postDao: PostDao, private val commentDao: CommentDao, private val tagDao: TagDao) {
     val logger: Logger = LoggerFactory.getLogger(BlogController::class.java)
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/api/test")
+    fun getAuth() {
+    }
+
     @PreAuthorize("permitAll()")
     @GetMapping("/api/posts")
     fun getPosts(@RequestParam query: String?, @RequestParam tag: String?): List<Post> {

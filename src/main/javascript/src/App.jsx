@@ -8,7 +8,10 @@ import PostForm from './PostForm';
 import {TagList} from './Tags';
 import SearchBar from './SearchBar';
 import Sidebar from './Sidebar';
-import {PostContext} from './PostContext';
+import {PostContext} from './context/PostContext';
+import {LoginForm} from './Login';
+import useAuth, {AuthContext} from './context/AuthContext';
+import {useCookies} from 'react-cookie';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -43,24 +46,27 @@ function PageNotFound() {
 
 function MainContent({post}) {
   return <Switch>
+    <PrivateRoute exact path="/posts/new">
+      <PostForm>
+        {(post) => <Redirect to={`/posts/${post.id}`}/>}
+      </PostForm>
+    </PrivateRoute>
+    <PrivateRoute exact path={['/posts/:id-:slug/edit', '/posts/:id/edit']}>
+      <PostForm editPost>
+        {(post) => <Redirect to={`/posts/${post.id}`}/>}
+      </PostForm>
+    </PrivateRoute>
+    <Route exact path={['/posts/:id-:slug', '/posts/:id']}>
+      <Post post={post}/>
+    </Route>
+    <Route exact path="/login">
+      <LoginForm/>
+    </Route>
     <Route exact path="/search">
       <SearchPosts query/>
     </Route>
     <Route exact path="/tags/:tag">
       <SearchPosts tag/>
-    </Route>
-    <Route exact path="/posts/new">
-      <PostForm>
-        {(post) => <Redirect to={`/posts/${post.id}`}/>}
-      </PostForm>
-    </Route>
-    <Route exact path={['/posts/:id-:slug/edit', '/posts/:id/edit']}>
-      <PostForm editPost>
-        {(post) => <Redirect to={`/posts/${post.id}`}/>}
-      </PostForm>
-    </Route>
-    <Route exact path={['/posts/:id-:slug', '/posts/:id']}>
-      <Post post={post}/>
     </Route>
     <Route exact path="/">
       <SearchPosts/>
@@ -72,9 +78,15 @@ function MainContent({post}) {
 }
 
 function SidebarContent({post}) {
+  const [authed] = useAuth();
+
   if (post === undefined) {
     return <Fragment>
-      <Link to="/posts/new">New Post</Link>
+      {authed && <Fragment>
+        <Link to="/posts/new">New Post</Link>
+        <hr/>
+      </Fragment>}
+      <UserPanel/>
       <hr/>
       <div>
         <h4>All tags</h4>
@@ -84,7 +96,11 @@ function SidebarContent({post}) {
   }
 
   return <Fragment>
-    <PostControls post={post}/>
+    <PrivateFragment>
+      <PostControls post={post}/>
+      <hr/>
+    </PrivateFragment>
+    <UserPanel/>
     <hr/>
     <div>
       <h4>Post tags</h4>
@@ -97,44 +113,68 @@ function SidebarContent({post}) {
   </Fragment>;
 }
 
+function PrivateFragment(props) {
+  const [authed] = useAuth();
+  return authed ? <Fragment {...props}/> : null;
+}
+
+function PrivateRoute(props) {
+  const [authed] = useAuth();
+  return authed ? <Route {...props} /> : <Redirect to="/"/>;
+}
+
+function UserPanel() {
+  const [authed] = useAuth();
+
+  if (authed)
+    return <Link to="/logout">Log out</Link>;
+
+  return <Link to="/login">Log in</Link>;
+}
+
 function App() {
+  const [{jwt_authed}] = useCookies(['jwt_authed']);
+  const [authed, setAuthed] = useState(jwt_authed === '1');
   const [post, setPost] = useState(null);
+
   return <Router>
-    <PostContext.Provider value={[post, setPost]}>
-      <header>
-        <h1>
-          <Link to="/">
-            <img src={process.env.PUBLIC_URL + '/spaghetti.png'} alt="Spaghetti Forever logo"/>
-            Spaghetti Forever
-          </Link>
-        </h1>
-        <SearchBar/>
-      </header>
+    <AuthContext.Provider value={[authed, setAuthed]}>
+      <PostContext.Provider value={[post, setPost]}>
+        <header>
+          <h1>
+            <Link to="/">
+              <img src={process.env.PUBLIC_URL + '/spaghetti.png'} alt="Spaghetti Forever logo"/>
+              Spaghetti Forever
+            </Link>
+          </h1>
+          <SearchBar/>
+        </header>
 
-      <div id="content">
-        <main>
-          <MainContent post={post}/>
-        </main>
+        <div id="content">
+          <main>
+            <MainContent post={post}/>
+          </main>
 
-        <Switch>
-          <Route exact path="/posts/new"/>
-          <Route exact path={['/posts/:id-:slug', '/posts/:id']}>
-            <Sidebar>
-              <SidebarContent post={post}/>
-            </Sidebar>
-          </Route>
-          <Route path="/">
-            <Sidebar>
-              <SidebarContent/>
-            </Sidebar>
-          </Route>
-        </Switch>
-      </div>
+          <Switch>
+            <PrivateRoute exact path="/posts/new"/>
+            <Route exact path={['/posts/:id-:slug', '/posts/:id']}>
+              <Sidebar>
+                <SidebarContent post={post}/>
+              </Sidebar>
+            </Route>
+            <Route path="/">
+              <Sidebar>
+                <SidebarContent/>
+              </Sidebar>
+            </Route>
+          </Switch>
+        </div>
 
-      <footer>
-        © Aleksi Kervinen 2020
-      </footer>
-    </PostContext.Provider>
+        <footer>
+          © Aleksi Kervinen 2020
+        </footer>
+      </PostContext.Provider>
+    </AuthContext.Provider>
   </Router>;
 }
 

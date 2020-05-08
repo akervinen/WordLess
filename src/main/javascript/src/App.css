@@ -48,7 +48,6 @@ a:hover, h1 a:hover, h2 a:hover {
 
 #root > header > h1 {
     flex: 1 1 auto;
-
     font-size: 180%;
 
     margin: 0;

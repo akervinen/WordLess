@@ -32,16 +32,17 @@ GET http://localhost:8080/api/posts/1/comments/1
 ### Delete post without authorization (error)
 DELETE http://localhost:8080/api/posts/1
 
+### Test auth
+GET http://localhost:8080/api/test
+
 ### Login
-POST http://localhost:8080/api/login
+POST http://localhost:8080/api/auth
 Content-Type: application/x-www-form-urlencoded
 
 username=admin&password=admin
 
 ### Delete post with authorization
 DELETE http://localhost:8080/api/posts/3
-Authorization: Bearer tokenhere
 
 ### Delete comment
 DELETE http://localhost:8080/api/posts/1/comments/1
-Authorization: Bearer tokenhere
