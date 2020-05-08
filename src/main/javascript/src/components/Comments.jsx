@@ -2,6 +2,7 @@ import React from 'react';
 import {useCookies} from 'react-cookie';
 import ReactMarkdown from 'react-markdown';
 import './Comments.css';
+import {PrivateFragment} from './Private';
 
 function Comment(props) {
   const {comment} = props;
@@ -25,10 +26,12 @@ function Comment(props) {
       <span className="commentAuthor">{comment.author}</span>
       <span>·</span>
       <time dateTime={posted.toISOString()}>{posted.toLocaleString()}</time>
-      <span>·</span>
-      <span className="commentControls">
-        <button onClick={onDelete}>delete</button>
-      </span>
+      <PrivateFragment>
+        <span>·</span>
+        <span className="commentControls">
+          <button onClick={onDelete}>delete</button>
+        </span>
+      </PrivateFragment>
     </header>
 
     <div>
