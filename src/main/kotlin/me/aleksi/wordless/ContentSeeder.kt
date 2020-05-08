@@ -1,12 +1,20 @@
 package me.aleksi.wordless
 
+import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.security.Keys
+import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import java.util.*
 
+@Component
 class ContentSeeder(private val settingsDao: SettingsDao, private val postDao: PostDao,
                     private val commentDao: CommentDao, private val tagDao: TagDao) : Seeder {
     override fun seed() {
-        settingsDao.set("test", "hello")
+        settingsDao.get("jwt_secret") ?: run {
+            val key = Keys.secretKeyFor(SignatureAlgorithm.HS512)
+            settingsDao.insert("jwt_secret", Base64.getEncoder().encodeToString(key.encoded))
+        }
 
         val tagHello = tagDao.insert(Tag(name = "hello-world"))
         val tagLorem = tagDao.insert(Tag(name = "lorem-ipsum"))

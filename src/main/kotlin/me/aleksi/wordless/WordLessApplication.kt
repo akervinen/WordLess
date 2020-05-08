@@ -28,6 +28,9 @@ class WordLessApplication constructor(private val jdbi: Jdbi, private val seeder
         }
 
         seeder.seed()
+
+        // Setup JWT authentication key
+
     }
 
     private fun getStringFromResource(resource: Resource): String? {

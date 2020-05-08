@@ -46,9 +46,4 @@ class Configuration {
     fun tagDao(jdbi: Jdbi): TagDao {
         return jdbi.onDemand(TagDao::class.java)
     }
-
-    @Bean
-    fun seeder(settingsDao: SettingsDao, postDao: PostDao, commentDao: CommentDao, tagDao: TagDao): Seeder {
-        return ContentSeeder(settingsDao, postDao, commentDao, tagDao)
-    }
 }
