@@ -1,4 +1,4 @@
-import {Link, Redirect, useLocation, useParams} from 'react-router-dom';
+import {Link, Redirect, useParams} from 'react-router-dom';
 import React, {Fragment, useContext, useEffect, useState} from 'react';
 import {useCookies} from 'react-cookie';
 import ReactMarkdown from 'react-markdown';
@@ -7,8 +7,7 @@ import {PostContext} from './PostContext';
 
 import './Post.css';
 
-export function PostHeader(props) {
-  const {post} = props;
+export function PostHeader({post}) {
   const posted = new Date(post.postedTime);
   return <header>
     <h1>
@@ -20,8 +19,7 @@ export function PostHeader(props) {
   </header>;
 }
 
-export function PostSummary(props) {
-  const {post} = props;
+export function PostSummary({post}) {
   return <article className="summaryBlock">
     <PostHeader post={post}/>
 
@@ -39,43 +37,9 @@ export function PostSummary(props) {
   </article>;
 }
 
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
-
-export function PostList() {
-  const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState([]);
-
-  const query = useQuery();
-  const querySearch = query.get('query');
-  const queryTag = query.get('tag');
-
-  let url = '/api/posts';
-  if (querySearch)
-    url += `?query=${querySearch}`;
-  if (queryTag)
-    url += (querySearch ? '&' : '?') + `tag=${queryTag}`;
-
-  useEffect(() => {
-    (async function fetchData() {
-      const result = await fetch(url);
-      setLoading(false);
-      setPosts(result.ok ? await result.json() : null);
-    })();
-  }, [url]);
-
-  if (loading)
-    return null;
-
-  if (!Array.isArray(posts))
-    return <h2>Error loading posts</h2>;
-
-  if (!!querySearch && posts.length === 0)
+export function PostList({posts}) {
+  if (!Array.isArray(posts) || posts.length === 0)
     return <h2>No posts found</h2>;
-
-  if (posts.length === 0)
-    return <h2>No posts yet</h2>;
 
   return <Fragment>
     {posts.map((item, idx) => (
@@ -87,9 +51,9 @@ export function PostList() {
   </Fragment>;
 }
 
-export function PostControls() {
+export function PostControls({post}) {
   const [cookies] = useCookies(['XSRF-TOKEN']);
-  const [post, setPost] = useContext(PostContext);
+  const [, setPost] = useContext(PostContext);
 
   const [deleteClicked, setDeleteClicked] = useState(false);
   const [deleted, setDeleted] = useState(false);

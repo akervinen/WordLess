@@ -4,9 +4,8 @@ import {PostContext} from './PostContext';
 
 import './Tags.css';
 
-export function Tag(props) {
-  const {tag} = props;
-  return <Link to={`/search/?tag=${tag}`} className="tag">
+export function Tag({tag}) {
+  return <Link to={`/tags/${tag}`} className="tag">
     #{tag}
   </Link>;
 }

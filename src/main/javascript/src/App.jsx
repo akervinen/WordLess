@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {BrowserRouter as Router, Link, Redirect, Route, Switch} from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {BrowserRouter as Router, Link, Redirect, Route, Switch, useLocation, useParams} from 'react-router-dom';
 
 import './App.css';
 
@@ -10,10 +10,41 @@ import SearchBar from './SearchBar';
 import Sidebar from './Sidebar';
 import {PostContext} from './PostContext';
 
-function MainContent() {
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+function SearchPosts({query, tag}) {
+  const [posts, setPosts] = useState(null);
+  const tagName = useParams().tag;
+  const queryParams = useQuery();
+
+  let url = '/api/posts';
+  if (query)
+    url += `?query=${queryParams.get('query')}`;
+  if (tag)
+    url += (query ? '&' : '?') + `tag=${tagName}`;
+
+  useEffect(() => {
+    (async function fetchData() {
+      const result = await fetch(url);
+      setPosts(result.ok ? await result.json() : null);
+    })();
+  }, [url]);
+
+  if (!posts) return null;
+
+  return <PostList posts={posts}/>;
+}
+
+function MainContent(props) {
+  const {post} = props;
   return <Switch>
     <Route path="/search">
-      <PostList/>
+      <SearchPosts query/>
+    </Route>
+    <Route path="/tags/:tag">
+      <SearchPosts tag/>
     </Route>
     <Route exact path="/posts/new">
       <PostForm>
@@ -26,23 +57,24 @@ function MainContent() {
       </PostForm>
     </Route>
     <Route path={['/posts/:id-:slug', '/posts/:id']}>
-      <Post/>
+      <Post post={post}/>
     </Route>
     <Route path="/">
-      <PostList/>
+      <SearchPosts/>
     </Route>
   </Switch>;
 }
 
-function SidebarContent() {
+function SidebarContent(props) {
+  const {post} = props;
   return <Switch>
     <Route exact path="/posts/new"/>
     <Route path={['/posts/:id-:slug', '/posts/:id']}>
-      <PostControls/>
+      <PostControls post={post}/>
       <hr/>
       <div>
         <h4>Post tags</h4>
-        <TagList postOnly/>
+        <TagList post={post}/>
       </div>
       <div>
         <h4>All tags</h4>
