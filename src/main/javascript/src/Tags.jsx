@@ -1,6 +1,5 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {PostContext} from './PostContext';
 
 import './Tags.css';
 
@@ -10,26 +9,22 @@ export function Tag({tag}) {
   </Link>;
 }
 
-export function TagList(props) {
+export function TagList({inline, post}) {
   const [tags, setTags] = useState([]);
-
-  const [post] = useContext(PostContext);
-
-  const {inline, postOnly} = props;
 
   useEffect(() => {
     (async function getTags() {
-      if (post && postOnly) {
-        setTags(post.tags);
+      if (post !== undefined) {
+        setTags(post?.tags);
         return;
       }
       let response = await fetch('/api/tags');
       if (response.ok)
         setTags((await response.json()).map(t => t.name));
     })();
-  }, [post, postOnly]);
+  }, [post]);
 
   return <ul className={inline ? 'inlineList' : 'tagList'}>
-    {tags.map(tag => <li key={tag}><Tag tag={tag}/></li>)}
+    {tags?.map(tag => <li key={tag}><Tag tag={tag}/></li>)}
   </ul>;
 }

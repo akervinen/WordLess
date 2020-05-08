@@ -56,7 +56,6 @@ export function PostControls({post}) {
   const [, setPost] = useContext(PostContext);
 
   const [deleteClicked, setDeleteClicked] = useState(false);
-  const [deleted, setDeleted] = useState(false);
 
   const onClick = async () => {
     if (window.confirm('Are you sure you want to delete this post?')) {
@@ -66,7 +65,6 @@ export function PostControls({post}) {
   useEffect(() => {
     (async function deletePost() {
       if (!deleteClicked || !post) return;
-      setDeleteClicked(false);
       const response = await fetch(`/api/posts/${post.id}`, {
         method: 'DELETE',
         headers: {
@@ -74,49 +72,58 @@ export function PostControls({post}) {
         }
       });
       if (response.ok) {
-        setDeleted(true);
         setPost(null);
+      } else {
+        setDeleteClicked(false);
       }
     })();
-  }, [deleteClicked, deleted, post, setPost, cookies]);
+  }, [deleteClicked, post, setPost, cookies]);
 
-  if (deleted) {
+  if (deleteClicked && !post) {
     return <Redirect to="/"/>;
   }
 
+  if (!post || post === PostNotFound)
+    return <div id="controls"/>;
+
   return <div id="controls">
-    <Link to={`/posts/${!post?.slug ? post?.id : `${post?.id}-${post?.slug}`}/edit`}>Edit Post</Link>
+    <Link to={`/posts/${`${post.id}-${post.slug}`}/edit`}>Edit Post</Link>
     <button onClick={onClick}>Delete Post</button>
   </div>;
 }
 
+export const PostNotFound = {};
+
 export function Post() {
-  const {id} = useParams();
-  const [loading, setLoading] = useState(true);
+  const {id, slug} = useParams();
 
   const [post, setPost] = useContext(PostContext);
 
   useEffect(() => {
     (async function fetchData() {
+      setPost(null);
       const result = await fetch(`/api/posts/${id}`);
-      setLoading(false);
-      setPost(result.ok ? await result.json() : null);
+      setPost(result.ok ? await result.json() : PostNotFound);
     })();
   }, [id, setPost]);
 
-  if (loading)
+  if (post === null)
     return <article>
       <div className="content">
       </div>
     </article>;
 
-  if (post === null) {
+  if (post === PostNotFound) {
     return <article>
       <div className="content">
         <h1>Post Not Found</h1>
       </div>
     </article>;
   }
+
+  // Redirect to URL with slug if using an id-only URL.
+  if (Number.parseInt(id) === post.id && slug !== post.slug)
+    return <Redirect to={`/posts/${post.id}-${post.slug}`}/>;
 
   return <Fragment>
     <article>
