@@ -5,6 +5,7 @@ import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys
 import org.jdbi.v3.sqlobject.statement.SqlQuery
 import org.jdbi.v3.sqlobject.statement.SqlUpdate
+import org.jdbi.v3.sqlobject.transaction.Transaction
 
 interface TagDao {
     @SqlQuery("""
@@ -35,6 +36,7 @@ interface TagDao {
     """)
     fun getTagsByPost(@Bind postId: Long): List<Tag>
 
+    @Transaction
     fun setPostTags(postId: Long, tags: List<String>) {
         removeTagsFromPost(postId)
         tags.filter { it.length in 2..49 }.forEach {
@@ -48,6 +50,7 @@ interface TagDao {
     """)
     fun addTagToPost(@Bind postId: Long, @Bind tagId: Long)
 
+    @Transaction
     private fun addTagToPost(postId: Long, tagName: String) {
         val tagId = getTagByName(tagName)?.id ?: insert(Tag(name = tagName))
         return addTagToPost(postId, tagId)

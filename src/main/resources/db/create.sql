@@ -4,6 +4,17 @@ drop table if exists "post_tags";
 drop table if exists "tag";
 drop table if exists "comment";
 drop table if exists "post";
+drop table if exists "settings";
+
+create table if not exists "settings"
+(
+    id    serial,
+    key   varchar(50) not null unique,
+    value text        not null default '',
+    primary key (id)
+);
+
+create index settings_key on "settings" (key);
 
 create table if not exists "post"
 (

@@ -3,8 +3,11 @@ package me.aleksi.wordless
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-class ContentSeeder(private val postDao: PostDao, private val commentDao: CommentDao, private val tagDao: TagDao) : Seeder {
+class ContentSeeder(private val settingsDao: SettingsDao, private val postDao: PostDao,
+                    private val commentDao: CommentDao, private val tagDao: TagDao) : Seeder {
     override fun seed() {
+        settingsDao.set("test", "hello")
+
         val tagHello = tagDao.insert(Tag(name = "hello-world"))
         val tagLorem = tagDao.insert(Tag(name = "lorem-ipsum"))
         tagDao.insert(Tag(name = "unused"))

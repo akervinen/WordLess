@@ -28,22 +28,27 @@ class Configuration {
     }
 
     @Bean
-    fun getPostDao(jdbi: Jdbi): PostDao {
+    fun settingsDao(jdbi: Jdbi): SettingsDao {
+        return jdbi.onDemand(SettingsDao::class.java)
+    }
+
+    @Bean
+    fun postDao(jdbi: Jdbi): PostDao {
         return jdbi.onDemand(PostDao::class.java)
     }
 
     @Bean
-    fun getCommentDao(jdbi: Jdbi): CommentDao {
+    fun commentDao(jdbi: Jdbi): CommentDao {
         return jdbi.onDemand(CommentDao::class.java)
     }
 
     @Bean
-    fun getTagDao(jdbi: Jdbi): TagDao {
+    fun tagDao(jdbi: Jdbi): TagDao {
         return jdbi.onDemand(TagDao::class.java)
     }
 
     @Bean
-    fun seeder(postDao: PostDao, commentDao: CommentDao, tagDao: TagDao): Seeder {
-        return ContentSeeder(postDao, commentDao, tagDao)
+    fun seeder(settingsDao: SettingsDao, postDao: PostDao, commentDao: CommentDao, tagDao: TagDao): Seeder {
+        return ContentSeeder(settingsDao, postDao, commentDao, tagDao)
     }
 }
