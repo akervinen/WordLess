@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder
 import java.time.Instant
 import java.util.*
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 @RestController
 class BlogController(private val postDao: PostDao, private val commentDao: CommentDao, private val tagDao: TagDao) {
@@ -17,6 +19,12 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/api/test")
     fun getAuth() {
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/api/logout")
+    fun logout(request: HttpServletRequest, response: HttpServletResponse) {
+        deleteCookies(request, response)
     }
 
     @PreAuthorize("permitAll()")

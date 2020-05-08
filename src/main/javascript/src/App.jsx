@@ -9,7 +9,7 @@ import {TagList} from './Tags';
 import SearchBar from './SearchBar';
 import Sidebar from './Sidebar';
 import {PostContext} from './context/PostContext';
-import {LoginForm} from './Login';
+import {LoginForm, LogoutPage} from './Login';
 import useAuth, {AuthContext} from './context/AuthContext';
 import {useCookies} from 'react-cookie';
 
@@ -59,6 +59,9 @@ function MainContent({post}) {
     <Route exact path={['/posts/:id-:slug', '/posts/:id']}>
       <Post post={post}/>
     </Route>
+    <PrivateRoute exact path="/logout">
+      <LogoutPage/>
+    </PrivateRoute>
     <Route exact path="/login">
       <LoginForm/>
     </Route>
