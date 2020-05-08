@@ -39,7 +39,7 @@ class SecurityConfiguration(private val settingsDao: SettingsDao)
     : WebSecurityConfigurerAdapter() {
     private lateinit var userDetailsService: UserDetailsService
 
-    @Value("\${spring.profiles.active}")
+    @Value("\${spring.profiles.active:prod}")
     private val activeProfile: String? = null
 
     override fun configure(auth: AuthenticationManagerBuilder) {
