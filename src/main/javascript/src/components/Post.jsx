@@ -31,7 +31,7 @@ export function PostSummary({post}) {
       <Link to={`/posts/${post.id}-${post.slug}`}>Read More...</Link>
       <span> · </span>
       <Link to={`/posts/${post.id}-${post.slug}#comments`}>
-        {post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}
+        {post.comments.length} {post.comments.length === 1 ? 'comment' : 'comments'}
       </Link>
     </footer>
   </article>;
