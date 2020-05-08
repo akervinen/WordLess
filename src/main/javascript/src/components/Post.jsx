@@ -53,6 +53,7 @@ export function PostList({posts}) {
 
 export function PostControls({post}) {
   const [cookies] = useCookies(['XSRF-TOKEN']);
+  const xsrfToken = cookies['XSRF-TOKEN'];
   const [, setPost] = useContext(PostContext);
 
   const [deleteClicked, setDeleteClicked] = useState(false);
@@ -68,7 +69,7 @@ export function PostControls({post}) {
       const response = await fetch(`/api/posts/${post.id}`, {
         method: 'DELETE',
         headers: {
-          'X-XSRF-TOKEN': cookies['XSRF-TOKEN']
+          'X-XSRF-TOKEN': xsrfToken
         }
       });
       if (response.ok) {
@@ -77,7 +78,7 @@ export function PostControls({post}) {
         setDeleteClicked(false);
       }
     })();
-  }, [deleteClicked, post, setPost, cookies]);
+  }, [deleteClicked, post, setPost, xsrfToken]);
 
   if (deleteClicked && !post) {
     return <Redirect to="/"/>;
