@@ -116,12 +116,15 @@ class JwtAuthorizationFilter(authManager: AuthenticationManager, private val set
     : BasicAuthenticationFilter(authManager) {
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
-        getToken(request)?.let { token ->
-            SecurityContextHolder.getContext().authentication = token
-        } ?: run {
-            SecurityContextHolder.clearContext()
-            deleteCookies(request, response)
-        }
+        // Only check auth on /api/ requests, otherwise authed cookie will be deleted
+        // because the token cookie is on /api path.
+        if (request.servletPath.startsWith("/api/"))
+            getToken(request)?.let { token ->
+                SecurityContextHolder.getContext().authentication = token
+            } ?: run {
+                SecurityContextHolder.clearContext()
+                deleteCookies(request, response)
+            }
 
         chain.doFilter(request, response)
     }

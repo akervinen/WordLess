@@ -5,12 +5,21 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder
 import java.time.Instant
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+
+@Controller
+class ReactController {
+    @GetMapping(value = ["/**/{path:[^\\.]*}"])
+    fun redirect(): String? {
+        return "forward:/"
+    }
+}
 
 @RestController
 class BlogController(private val postDao: PostDao, private val commentDao: CommentDao, private val tagDao: TagDao) {
