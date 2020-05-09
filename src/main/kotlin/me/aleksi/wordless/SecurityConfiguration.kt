@@ -4,9 +4,9 @@ import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
+import org.springframework.http.ResponseCookie
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -23,12 +23,10 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.servlet.FilterChain
-import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -39,9 +37,6 @@ class SecurityConfiguration(private val settingsDao: SettingsDao)
     : WebSecurityConfigurerAdapter() {
     private lateinit var userDetailsService: UserDetailsService
 
-    @Value("\${spring.profiles.active:prod}")
-    private val activeProfile: String? = null
-
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth.inMemoryAuthentication().withUser("admin").password("{noop}admin").roles("ADMIN")
         userDetailsService = auth.defaultUserDetailsService
@@ -49,10 +44,7 @@ class SecurityConfiguration(private val settingsDao: SettingsDao)
 
     override fun configure(http: HttpSecurity) {
         with(http) {
-            if (activeProfile == "dev")
-                csrf().disable()
-            else
-                csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            csrf().disable()
             addFilter(JwtAuthenticationFilter(authenticationManager(), settingsDao))
             addFilter(JwtAuthorizationFilter(authenticationManager(), settingsDao, userDetailsService))
             formLogin().disable()
@@ -97,13 +89,18 @@ class JwtAuthenticationFilter(authManager: AuthenticationManager, private val se
             .compact()
 
         // Set both cookies
-        response.addCookie(Cookie(TOKEN_COOKIE, token).apply {
-            isHttpOnly = true
-            maxAge = ChronoUnit.WEEKS.duration.seconds.toInt()
+        response.addHeader(HttpHeaders.SET_COOKIE, ResponseCookie.from(TOKEN_COOKIE, token).run {
+            maxAge(ChronoUnit.WEEKS.duration.seconds)
+            httpOnly(true)
+            sameSite("Strict")
+            build().toString()
         })
-        response.addCookie(Cookie(TOKEN_COOKIE_PUBLIC, "1").apply {
-            path = "/"
-            maxAge = ChronoUnit.WEEKS.duration.seconds.toInt()
+        response.addHeader(HttpHeaders.SET_COOKIE, ResponseCookie.from(TOKEN_COOKIE_PUBLIC, "1").run {
+            maxAge(ChronoUnit.WEEKS.duration.seconds)
+            httpOnly(false)
+            sameSite("Strict")
+            path("/")
+            build().toString()
         })
 
         // Add header for clients that don't use cookies
