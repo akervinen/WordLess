@@ -1,6 +1,5 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import {useCookies} from 'react-cookie';
 import './PostForm.css';
 
 function tagsToString(tags) {
@@ -13,7 +12,6 @@ function stringToTags(str) {
 
 export default function PostForm({editPost, children}) {
   const {id} = useParams();
-  const [cookies] = useCookies(['XSRF-TOKEN']);
 
   // If true, submit was clicked but no form was sent yet
   const [shouldSubmit, setShouldSubmit] = useState(false);
@@ -58,14 +56,13 @@ export default function PostForm({editPost, children}) {
       const response = await fetch(submitUrl, {
         method: submitMethod,
         headers: {
-          'Content-Type': 'application/json',
-          'X-XSRF-TOKEN': cookies['XSRF-TOKEN']
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(postData)
       });
       setResponse(response);
     })();
-  }, [submitUrl, submitMethod, shouldSubmit, submitted, postData, cookies]);
+  }, [submitUrl, submitMethod, shouldSubmit, submitted, postData]);
 
   // This useEffect grabs the Location header and finds the new
   // post id from it.

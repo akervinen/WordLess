@@ -1,21 +1,15 @@
 import React from 'react';
-import {useCookies} from 'react-cookie';
 import ReactMarkdown from 'react-markdown';
 import './Comments.css';
 import {PrivateFragment} from './Private';
 
 function Comment(props) {
   const {comment} = props;
-  const [cookies] = useCookies(['XSRF-TOKEN']);
   const posted = new Date(comment.postedTime);
 
   const onDelete = async function onDelete() {
     await fetch(`/api/posts/${comment.postId}/comments/${comment.id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-XSRF-TOKEN': cookies['XSRF-TOKEN']
-      }
+      method: 'DELETE'
     });
     // TODO: do this in a more React way
     window.location.reload();

@@ -1,6 +1,5 @@
 import {Link, Redirect, useParams} from 'react-router-dom';
 import React, {Fragment, useContext, useEffect, useState} from 'react';
-import {useCookies} from 'react-cookie';
 import ReactMarkdown from 'react-markdown';
 import {CommentForm, CommentList} from './Comments';
 import {PostContext} from '../context/PostContext';
@@ -52,8 +51,6 @@ export function PostList({posts}) {
 }
 
 export function PostControls({post}) {
-  const [cookies] = useCookies(['XSRF-TOKEN']);
-  const xsrfToken = cookies['XSRF-TOKEN'];
   const [, setPost] = useContext(PostContext);
 
   const [deleteClicked, setDeleteClicked] = useState(false);
@@ -67,10 +64,7 @@ export function PostControls({post}) {
     (async function deletePost() {
       if (!deleteClicked || !post) return;
       const response = await fetch(`/api/posts/${post.id}`, {
-        method: 'DELETE',
-        headers: {
-          'X-XSRF-TOKEN': xsrfToken
-        }
+        method: 'DELETE'
       });
       if (response.ok) {
         setPost(null);
@@ -78,7 +72,7 @@ export function PostControls({post}) {
         setDeleteClicked(false);
       }
     })();
-  }, [deleteClicked, post, setPost, xsrfToken]);
+  }, [deleteClicked, post, setPost]);
 
   if (deleteClicked && !post) {
     return <Redirect to="/"/>;

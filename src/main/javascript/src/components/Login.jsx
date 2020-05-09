@@ -3,26 +3,20 @@ import {Redirect} from 'react-router-dom';
 import useAuth from '../context/AuthContext';
 
 import './Login.css';
-import {useCookies} from 'react-cookie';
 
 export function LogoutPage() {
   const [authed, setAuthed] = useAuth();
-  const [cookies] = useCookies(['XSRF-TOKEN']);
-  const xsrfToken = cookies['XSRF-TOKEN'];
 
   useEffect(() => {
     if (!authed) return;
     (async function logout() {
       const response = await fetch(`/api/logout`, {
-        method: 'POST',
-        headers: {
-          'X-XSRF-TOKEN': xsrfToken
-        }
+        method: 'POST'
       });
       if (response.ok)
         setAuthed(false);
     })();
-  }, [authed, setAuthed, xsrfToken]);
+  }, [authed, setAuthed]);
 
   if (!authed)
     return <Redirect to="/"/>;
@@ -32,8 +26,6 @@ export function LogoutPage() {
 
 export function LoginForm() {
   const [authed, setAuthed] = useAuth();
-  const [cookies] = useCookies(['XSRF-TOKEN']);
-  const xsrfToken = cookies['XSRF-TOKEN'];
 
   if (authed)
     return <Redirect to="/"/>;
@@ -50,10 +42,7 @@ export function LoginForm() {
 
     const response = await fetch(`/api/auth`, {
       method: 'POST',
-      body: new URLSearchParams(loginData),
-      headers: {
-        'X-XSRF-TOKEN': xsrfToken
-      }
+      body: new URLSearchParams(loginData)
     });
 
     if (response.ok)
