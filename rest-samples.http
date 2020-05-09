@@ -16,24 +16,31 @@ GET http://localhost:8080/api/posts?tag=lorem-ipsum&query=lorem
 ### Get one post
 GET http://localhost:8080/api/posts/1
 
-### Get all comments in post
-GET http://localhost:8080/api/posts/1/comments
-
 ### Get all tags in post
 GET http://localhost:8080/api/posts/1/tags
+
+### Get all comments in post
+GET http://localhost:8080/api/posts/1/comments
 
 ### Get one comment
 GET http://localhost:8080/api/posts/1/comments/1
 
-# These require authentication with JWT
-# Just run the /api/login POST request, copy the Authorization header from the response
-# and paste it to the other requests.
+### Add comment
+POST http://localhost:8080/api/posts/1/comments
+Content-Type: application/json
+
+{
+  "author": "test",
+  "content": "foo"
+}
+
+
+### These require authentication with JWT
+### Just run the /api/login POST request, copy the Authorization header from the response
+### and paste it to the other requests.
 
 ### Delete post without authorization (error)
 DELETE http://localhost:8080/api/posts/1
-
-### Test auth
-GET http://localhost:8080/api/test
 
 ### Login
 POST http://localhost:8080/api/auth
@@ -41,8 +48,37 @@ Content-Type: application/x-www-form-urlencoded
 
 username=admin&password=admin
 
+### Test auth
+GET http://localhost:8080/api/test
+Authorization: Bearer tokengoeshere
+
+### Add post
+POST http://localhost:8080/api/posts
+Authorization: Bearer tokengoeshere
+Content-Type: application/json
+
+{
+  "title": "foo",
+  "content": "bar"
+}
+
+### Edit post
+PUT http://localhost:8080/api/posts/1
+Authorization: Bearer tokengoeshere
+Content-Type: application/json
+
+{
+  "title": "edited",
+  "content": "edited",
+  "tags": [
+    "edited"
+  ]
+}
+
 ### Delete post with authorization
 DELETE http://localhost:8080/api/posts/3
+Authorization: Bearer tokengoeshere
 
 ### Delete comment
 DELETE http://localhost:8080/api/posts/1/comments/1
+Authorization: Bearer tokengoeshere

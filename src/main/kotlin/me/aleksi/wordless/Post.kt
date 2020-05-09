@@ -10,6 +10,6 @@ data class Post(val id: Long = 0, val title: String = "",
                 val comments: MutableList<Comment>? = mutableListOf(), val tags: MutableList<String>? = mutableListOf())
 
 data class PostRequest(val title: String,
-                       val public: Boolean, val locked: Boolean,
-                       val summary: String, val content: String,
+                       val public: Boolean = true, val locked: Boolean = false,
+                       val summary: String = "", val content: String,
                        val tags: List<String>?)
