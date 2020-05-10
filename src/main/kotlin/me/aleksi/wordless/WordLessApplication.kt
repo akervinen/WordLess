@@ -21,6 +21,9 @@ class WordLessApplication constructor(private val jdbi: Jdbi, private val seeder
         println("curl samples:")
         println(curlSample)
 
+        println("Username: admin")
+        println("Password: admin")
+
         val createScript = getStringFromResource(ClassPathResource("/db/create.sql"))
 
         jdbi.useHandle<Exception> { handle ->

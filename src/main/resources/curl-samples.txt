@@ -1,20 +1,61 @@
 ### Get all posts
 curl http://localhost:8080/api/posts
 
-### Search posts with query
-curl http://localhost:8080/api/posts?query=hello
+### Get all tags
+curl http://localhost:8080/api/tags
+
+### Find posts by query
+curl "http://localhost:8080/api/posts?query=lorem"
+
+### Find posts by tag
+curl "http://localhost:8080/api/posts?tag=hello-world"
+
+### Find posts by both
+curl "http://localhost:8080/api/posts?tag=lorem-ipsum&query=lorem"
 
 ### Get one post
 curl http://localhost:8080/api/posts/1
 
-### Delete post
-curl -X DELETE http://localhost:8080/api/posts/1
+### Get all tags in post
+curl http://localhost:8080/api/posts/1/tags
 
-### Get all comments in a post
+### Get all comments in post
 curl http://localhost:8080/api/posts/1/comments
 
 ### Get one comment
 curl http://localhost:8080/api/posts/1/comments/1
 
+### Add comment
+curl -H "Content-Type: application/json" -d "{\"author\": \"test\",\"content\": \"foo\"}" \
+    http://localhost:8080/api/posts/1/comments
+
+### These require authentication with JWT
+### Just run the /api/login POST request, copy the Authorization header from the response
+### and paste it to the other requests.
+
+### Delete post without authorization (error)
+curl -X DELETE http://localhost:8080/api/posts/1
+
+### Login
+curl -i -d "username=admin&password=admin" http://localhost:8080/api/auth
+
+### Test auth
+curl -H "Authorization: Bearer tokengoeshere" http://localhost:8080/api/test
+
+### Add post
+curl -H "Authorization: Bearer tokengoeshere" \
+    -H "Content-Type: application/json" \
+    -d "{\"title\": \"foo\",\"content\": \"bar\"}" \
+    http://localhost:8080/api/posts
+
+### Edit post
+curl -X PUT -H "Authorization: Bearer tokengoeshere" \
+    -H "Content-Type: application/json" \
+    -d "{\"title\": \"edited\",\"content\": \"edited\",\"tags\": [\"edited\"]}" \
+    http://localhost:8080/api/posts/1
+
+### Delete post with authorization
+curl -X DELETE -H "Authorization: Bearer tokengoeshere" http://localhost:8080/api/posts/3
+
 ### Delete comment
-curl -X DELETE http://localhost:8080/api/posts/1/comments/1
+curl -X DELETE -H "Authorization: Bearer tokengoeshere" http://localhost:8080/api/posts/1/comments/1
