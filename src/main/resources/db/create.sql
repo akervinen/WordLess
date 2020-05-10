@@ -1,10 +1,10 @@
 -- noinspection SqlResolveForFile @ object-type/"serial"
 
-drop table if exists "post_tags";
-drop table if exists "tag";
-drop table if exists "comment";
-drop table if exists "post";
-drop table if exists "settings";
+-- drop table if exists "post_tags";
+-- drop table if exists "tag";
+-- drop table if exists "comment";
+-- drop table if exists "post";
+-- drop table if exists "settings";
 
 create table if not exists "settings"
 (
@@ -14,7 +14,7 @@ create table if not exists "settings"
     primary key (id)
 );
 
-create index settings_key on "settings" (key);
+create index if not exists settings_key on "settings" (key);
 
 create table if not exists "post"
 (
@@ -30,7 +30,7 @@ create table if not exists "post"
     primary key (id)
 );
 
-create index post_posted_time on "post" (posted_time);
+create index if not exists post_posted_time on "post" (posted_time);
 
 create table if not exists "comment"
 (
@@ -43,8 +43,8 @@ create table if not exists "comment"
     foreign key (post_id) references "post" (id) on delete cascade
 );
 
-create index comment_post_id on "comment" (post_id);
-create index comment_posted_time on "comment" (posted_time);
+create index if not exists comment_post_id on "comment" (post_id);
+create index if not exists comment_posted_time on "comment" (posted_time);
 
 create table if not exists "tag"
 (
@@ -52,7 +52,7 @@ create table if not exists "tag"
     name varchar(50) not null unique,
     primary key (id)
 );
-create index tag_name on "tag" (name);
+create index if not exists tag_name on "tag" (name);
 
 create table if not exists "post_tags"
 (
@@ -63,4 +63,4 @@ create table if not exists "post_tags"
     foreign key (tag_id) references "tag" (id) on delete cascade
 );
 
-create index post_tags_reverse on "post_tags" (tag_id, post_id);
+create index if not exists post_tags_reverse on "post_tags" (tag_id, post_id);

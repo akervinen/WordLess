@@ -20,7 +20,10 @@ class ContentSeeder(private val settingsDao: SettingsDao, private val postDao: P
      * Seeds the database with initial sample data.
      */
     override fun seed() {
-        settingsDao.get("jwt_secret") ?: run {
+        // Bail out here if content already exists
+        if (settingsDao.get("jwt_secret") != null) {
+            return
+        } else {
             val key = Keys.secretKeyFor(SignatureAlgorithm.HS512)
             settingsDao.insert("jwt_secret", Base64.getEncoder().encodeToString(key.encoded))
         }
