@@ -7,9 +7,18 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
 
+/**
+ * Basic implementation of [Seeder] that creates some sample posts, tags and comments.
+ *
+ * Important part if JWT secret generation in the beginning.
+ */
 @Component
 class ContentSeeder(private val settingsDao: SettingsDao, private val postDao: PostDao,
                     private val commentDao: CommentDao, private val tagDao: TagDao) : Seeder {
+
+    /**
+     * Seeds the database with initial sample data.
+     */
     override fun seed() {
         settingsDao.get("jwt_secret") ?: run {
             val key = Keys.secretKeyFor(SignatureAlgorithm.HS512)

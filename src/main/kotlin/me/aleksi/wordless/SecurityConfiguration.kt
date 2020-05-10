@@ -30,6 +30,9 @@ import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+/**
+ * Security configuration: creates the admin account, adds JWT auth filters, disables CSRF.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -108,6 +111,9 @@ class JwtAuthenticationFilter(authManager: AuthenticationManager, private val se
     }
 }
 
+/**
+ * Filter that checks incoming requests for a JWT token and validates it.
+ */
 class JwtAuthorizationFilter(authManager: AuthenticationManager, private val settingsDao: SettingsDao,
                              private val userDetailsService: UserDetailsService)
     : BasicAuthenticationFilter(authManager) {
@@ -126,6 +132,9 @@ class JwtAuthorizationFilter(authManager: AuthenticationManager, private val set
         chain.doFilter(request, response)
     }
 
+    /**
+     * Validate a JWT token and check its validity.
+     */
     private fun getToken(request: HttpServletRequest): UsernamePasswordAuthenticationToken? {
         val signingKey = settingsDao.get("jwt_secret")?.let {
             Keys.hmacShaKeyFor(Base64.getDecoder().decode(it))

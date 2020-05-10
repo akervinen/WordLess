@@ -3,12 +3,23 @@ import {Link} from 'react-router-dom';
 
 import './TagList.css';
 
+/**
+ * A tag that links to its page for browsing posts.
+ * @param tag tag data
+ * @returns {*} JSX for a Link with the tag name
+ */
 function Tag({tag}) {
   return <Link to={`/tags/${tag}`} className="tag">
     #{tag}
   </Link>;
 }
 
+/**
+ * A list of tags, either all of them or one post's tags.
+ * @param inline whether the list should be in a single line instead of multiple
+ * @param post post data if showing post's tags
+ * @returns {*} JSX for a list of tags
+ */
 export function TagList({inline, post}) {
   const [tags, setTags] = useState([]);
 

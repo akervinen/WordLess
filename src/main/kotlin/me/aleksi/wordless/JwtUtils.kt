@@ -14,6 +14,9 @@ const val TOKEN_PREFIX = "Bearer "
 const val TOKEN_TYPE = "JWT"
 const val TOKEN_ISSUER = "spaghetti-blog"
 
+/**
+ * Deletes JWT-related cookies.
+ */
 fun deleteCookies(request: HttpServletRequest, response: HttpServletResponse) {
     // Delete both auth cookies
     request.cookies?.find { it.name == TOKEN_COOKIE }?.apply {

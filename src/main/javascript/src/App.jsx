@@ -15,10 +15,20 @@ import Sidebar from './components/Sidebar';
 import {LoginForm, LogoutPage} from './components/Login';
 import {PrivateFragment, PrivateRoute} from './components/Private';
 
+/**
+ * Hook to access query parameters easily.
+ * @returns {URLSearchParams} query parameters
+ */
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
+/**
+ * Queries the server for posts and shows them in a PostList.
+ * @param query search query, or null
+ * @param tag tag to filter by, or null
+ * @returns {null|PostList} PostList with filtered posts, or null while the query is happening
+ */
 function SearchPosts({query, tag}) {
   const [posts, setPosts] = useState(null);
   const tagName = useParams().tag;
@@ -42,10 +52,11 @@ function SearchPosts({query, tag}) {
   return <PostList posts={posts}/>;
 }
 
-function PageNotFound() {
-  return <h2>Page Not Found</h2>;
-}
-
+/**
+ * Main content display.
+ * @param post selected post, if any
+ * @returns {*} Switch with Routes containing main content
+ */
 function MainContent({post}) {
   return <Switch>
     <PrivateRoute exact path="/posts/new">
@@ -77,11 +88,16 @@ function MainContent({post}) {
       <SearchPosts/>
     </Route>
     <Route path="*">
-      <PageNotFound/>
+      <h2>Page Not Found</h2>
     </Route>
   </Switch>;
 }
 
+/**
+ * Side bar contents, based on whether a singular post is selected or not.
+ * @param post selected post data
+ * @returns {*} Fragment with sidebar contents
+ */
 function SidebarContent({post}) {
   const [authed] = useAuth();
 
@@ -118,6 +134,10 @@ function SidebarContent({post}) {
   </Fragment>;
 }
 
+/**
+ * Login or logout button based on authentication status.
+ * @returns {*} Link to login/logout
+ */
 function UserPanel() {
   const [authed] = useAuth();
 
@@ -127,6 +147,10 @@ function UserPanel() {
   return <Link to="/login">Log in</Link>;
 }
 
+/**
+ * Main app, contains everything.
+ * @returns {Router} Router with the whole page contents
+ */
 function App() {
   const [{jwt_authed}] = useCookies(['jwt_authed']);
   const [authed, setAuthed] = useState(jwt_authed === '1');

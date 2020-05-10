@@ -6,6 +6,12 @@ import {PostContext} from '../context/PostContext';
 
 import './Post.css';
 
+/**
+ * Post metadata as a header: title, posted time.
+ *
+ * @param post post data
+ * @returns {*} JSX for a header
+ */
 export function PostHeader({post}) {
   const posted = new Date(post.postedTime);
   return <header>
@@ -18,6 +24,12 @@ export function PostHeader({post}) {
   </header>;
 }
 
+/**
+ * Short summary of a post, containing header, summary and links to read more or comments.
+ *
+ * @param post post data
+ * @returns {*} JSX for a summary element
+ */
 export function PostSummary({post}) {
   return <article className="summaryBlock">
     <PostHeader post={post}/>
@@ -36,6 +48,12 @@ export function PostSummary({post}) {
   </article>;
 }
 
+/**
+ * List of posts.
+ *
+ * @param posts list of posts
+ * @returns {*} JSX for a list of posts
+ */
 export function PostList({posts}) {
   if (!Array.isArray(posts) || posts.length === 0)
     return <h2>No posts found</h2>;
@@ -50,6 +68,12 @@ export function PostList({posts}) {
   </Fragment>;
 }
 
+/**
+ * Admin controls for a post, like edit and delete buttons.
+ *
+ * @param post post data
+ * @returns {*} JSX for control buttons
+ */
 export function PostControls({post}) {
   const [, setPost] = useContext(PostContext);
 
@@ -87,8 +111,16 @@ export function PostControls({post}) {
   </div>;
 }
 
+/**
+ * Placeholder empty object for 404 post data. Used to differentiate between "no post selected" and "post not found".
+ * @type {{}}
+ */
 export const PostNotFound = {};
 
+/**
+ * Post component. Displays header, full summary + content and comments.
+ * @returns {*} JSX for a post page
+ */
 export function Post() {
   const {id, slug} = useParams();
 

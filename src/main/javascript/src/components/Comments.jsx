@@ -3,8 +3,13 @@ import ReactMarkdown from 'react-markdown';
 import './Comments.css';
 import {PrivateFragment} from './Private';
 
-function Comment(props) {
-  const {comment} = props;
+/**
+ * Comment component with metadata and content display, and controls for admins (delete button).
+ *
+ * @param comment comment data
+ * @returns {*} JSX for the comment box
+ */
+function Comment({comment}) {
   const posted = new Date(comment.postedTime);
 
   const onDelete = async function onDelete() {
@@ -34,9 +39,13 @@ function Comment(props) {
   </div>;
 }
 
-export function CommentForm(props) {
-  const {post} = props;
-
+/**
+ * Comment form for posting new comments.
+ *
+ * @param post post data the comment will be posted under
+ * @returns {*} JSX for the comment form
+ */
+export function CommentForm({post}) {
   const onSubmit = async function onSubmit(evt) {
     evt.preventDefault();
 
@@ -84,9 +93,13 @@ export function CommentForm(props) {
   </form>;
 }
 
-export function CommentList(props) {
-  const {post} = props;
-
+/**
+ * List of comments in a post.
+ *
+ * @param post post containing the comments
+ * @returns {*} JSX for all comments in a list
+ */
+export function CommentList({post}) {
   if (!post)
     return <h3>Loading...</h3>;
 

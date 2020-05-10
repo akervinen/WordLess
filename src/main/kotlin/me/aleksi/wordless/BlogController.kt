@@ -13,29 +13,52 @@ import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+/**
+ * Controller that only forwards non-API requests to the root path for React to handle.
+ */
 @Controller
 class ReactController {
+    /**
+     * Redirects to root path. Mapping is for all non-existing paths.
+     */
     @GetMapping(value = ["/**/{path:[^\\.]*}"])
     fun redirect(): String? {
         return "forward:/"
     }
 }
 
+/**
+ * The main controller that handles all API requests.
+ */
 @RestController
 class BlogController(private val postDao: PostDao, private val commentDao: CommentDao, private val tagDao: TagDao) {
     val logger: Logger = LoggerFactory.getLogger(BlogController::class.java)
 
+    /**
+     * Endpoint for testing authentication, does nothing.
+     *
+     * Requires admin role.
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/api/test")
     fun getAuth() {
     }
 
+    /**
+     * Logs user out by deleting cookies. Does nothing if cookies aren't used for authentication,
+     * since JWTs can not be invalidated.
+     *
+     * Requires admin role.
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/api/logout")
     fun logout(request: HttpServletRequest, response: HttpServletResponse) {
         deleteCookies(request, response)
     }
 
+    /**
+     * Get all posts and their metadata.
+     */
     @PreAuthorize("permitAll()")
     @GetMapping("/api/posts")
     fun getPosts(@RequestParam query: String?, @RequestParam tag: String?): List<Post> {
@@ -51,6 +74,9 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return postDao.getAllPosts()
     }
 
+    /**
+     * Get all tags.
+     */
     @PreAuthorize("permitAll()")
     @GetMapping("/api/tags")
     fun getTags(): List<Tag> {
@@ -58,6 +84,9 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return tagDao.getAllUsed()
     }
 
+    /**
+     * Get a specific post's data by its [id] number.
+     */
     @PreAuthorize("permitAll()")
     @GetMapping("/api/posts/{id}")
     fun getPost(@PathVariable id: Long): ResponseEntity<Post> {
@@ -65,22 +94,31 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.of(Optional.ofNullable(postDao.findById(id)))
     }
 
+    /**
+     * Get a list of a post's tags by its [id].
+     */
     @PreAuthorize("permitAll()")
-    @GetMapping("/api/posts/{postId}/tags")
-    fun getTags(@PathVariable postId: Long): ResponseEntity<List<Tag>> {
-        logger.debug("getTags(postId=$postId)")
-        if (postDao.findById(postId) == null) return ResponseEntity.notFound().build()
-        return ResponseEntity.ok(tagDao.getTagsByPost(postId))
+    @GetMapping("/api/posts/{id}/tags")
+    fun getTags(@PathVariable id: Long): ResponseEntity<List<Tag>> {
+        logger.debug("getTags(postId=$id)")
+        if (postDao.findById(id) == null) return ResponseEntity.notFound().build()
+        return ResponseEntity.ok(tagDao.getTagsByPost(id))
     }
 
+    /**
+     * Get a post's comments by the post's [id].
+     */
     @PreAuthorize("permitAll()")
-    @GetMapping("/api/posts/{postId}/comments")
-    fun getComments(@PathVariable postId: Long): ResponseEntity<List<Comment>> {
-        logger.debug("getComments(postId=$postId)")
-        if (postDao.findById(postId) == null) return ResponseEntity.notFound().build()
-        return ResponseEntity.ok(commentDao.getComments(postId))
+    @GetMapping("/api/posts/{id}/comments")
+    fun getComments(@PathVariable id: Long): ResponseEntity<List<Comment>> {
+        logger.debug("getComments(postId=$id)")
+        if (postDao.findById(id) == null) return ResponseEntity.notFound().build()
+        return ResponseEntity.ok(commentDao.getComments(id))
     }
 
+    /**
+     * Get a comment by [id] from a post by [postId].
+     */
     @PreAuthorize("permitAll()")
     @GetMapping("/api/posts/{postId}/comments/{id}")
     fun getComment(@PathVariable postId: Long, @PathVariable id: Long): ResponseEntity<Comment> {
@@ -88,6 +126,11 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.of(Optional.ofNullable(commentDao.getComment(id)))
     }
 
+    /**
+     * Delete a post by its [id].
+     *
+     * Requires admin role.
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/api/posts/{id}")
     fun deletePost(@PathVariable id: Long): ResponseEntity<Unit> {
@@ -96,6 +139,11 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.noContent().build()
     }
 
+    /**
+     * Delete a comment by its [id] from a post by [postId].
+     *
+     * Requires admin role.
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/api/posts/{postId}/comments/{id}")
     fun deleteComment(@PathVariable postId: Long, @PathVariable id: Long): ResponseEntity<Unit> {
@@ -104,6 +152,11 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.noContent().build()
     }
 
+    /**
+     * Create a new post with specified [post] data.
+     *
+     * Requires admin role.
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/api/posts")
     fun createPost(@RequestBody post: PostRequest): ResponseEntity<Unit> {
@@ -113,7 +166,7 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
                                title = post.title,
                                slug = post.title.slugify(),
                                public = post.public,
-                               locked = false,
+                               locked = post.locked,
                                postedTime = Instant.now(),
                                editedTime = null,
                                summary = post.summary,
@@ -130,6 +183,11 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.created(loc).build()
     }
 
+    /**
+     * Add a comment to a post by [postId], using specified [comment] data.
+     *
+     * Does _not_ require authentication.
+     */
     @PreAuthorize("permitAll()")
     @PostMapping("/api/posts/{postId}/comments")
     fun createComment(@PathVariable postId: Long, @RequestBody comment: CommentRequest): ResponseEntity<Unit> {
@@ -154,6 +212,12 @@ class BlogController(private val postDao: PostDao, private val commentDao: Comme
         return ResponseEntity.created(loc).build()
     }
 
+    /**
+     * Update a post by [id] with specified [post] data.
+     * Also updates edited time while leaving the original post time untouched.
+     *
+     * Requires admin role.
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/api/posts/{id}")
     fun updatePost(@PathVariable id: Long, @RequestBody post: PostRequest): ResponseEntity<Unit> {

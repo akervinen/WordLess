@@ -10,8 +10,14 @@ import org.springframework.util.FileCopyUtils
 import java.io.InputStreamReader
 import kotlin.text.Charsets.UTF_8
 
+/**
+ * Blog application.
+ */
 @SpringBootApplication
 class WordLessApplication constructor(private val jdbi: Jdbi, private val seeder: Seeder) : CommandLineRunner {
+    /**
+     * Runs on startup, prints information and creates database schema and initial data.
+     */
     override fun run(vararg args: String?) {
         println("Team: Spaghetti Forever")
         println("\tMember: Aleksi Kervinen")
@@ -33,6 +39,9 @@ class WordLessApplication constructor(private val jdbi: Jdbi, private val seeder
         seeder.seed()
     }
 
+    /**
+     * Gets a file's contents from classpath resources.
+     */
     private fun getStringFromResource(resource: Resource): String? {
         return InputStreamReader(resource.inputStream, UTF_8).use { reader ->
             FileCopyUtils.copyToString(reader)
@@ -40,6 +49,9 @@ class WordLessApplication constructor(private val jdbi: Jdbi, private val seeder
     }
 }
 
+/**
+ * Starts [WordLessApplication].
+ */
 fun main(args: Array<String>) {
     runApplication<WordLessApplication>(*args)
 }

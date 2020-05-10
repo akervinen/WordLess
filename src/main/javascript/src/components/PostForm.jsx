@@ -2,14 +2,29 @@ import React, {Fragment, useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import './PostForm.css';
 
+/**
+ * Converts a list of tags into a string with space-separated tags.
+ * @param tags list of string-type tags
+ */
 function tagsToString(tags) {
   return tags?.join(' ');
 }
 
+/**
+ * Converts a string from space-separated tags into a list of string-type tags.
+ * @param str tags separated by spaces
+ * @returns {*|string[]} list of string-type tags, or null if given string was null
+ */
 function stringToTags(str) {
   return str?.split(/\s+/);
 }
 
+/**
+ * Form for editing or creating a post.
+ * @param editPost post to edit, null/undefined if creating a new post
+ * @param children children components to display after submission
+ * @returns {*} JSX for an editing form
+ */
 export default function PostForm({editPost, children}) {
   const {id} = useParams();
 
@@ -28,7 +43,7 @@ export default function PostForm({editPost, children}) {
     tags: []
   });
 
-  //
+  // Fetches fresh post data from the server to display on the form.
   useEffect(() => {
     if (!id) return;
     (async function fetchData() {
@@ -49,6 +64,7 @@ export default function PostForm({editPost, children}) {
   const submitUrl = editPost ? `/api/posts/${id}` : '/api/posts';
   const submitMethod = editPost ? 'PUT' : 'POST';
 
+  // Submits post data to the server for creation or updating an existing post.
   useEffect(() => {
     (async function submitPost() {
       if (!shouldSubmit || submitted) return;
@@ -81,6 +97,7 @@ export default function PostForm({editPost, children}) {
     }
   }, [response]);
 
+  // Called whenever one of the form inputs changes
   const onChange = function onChange(evt) {
     const target = evt.target;
     let value = target.value;

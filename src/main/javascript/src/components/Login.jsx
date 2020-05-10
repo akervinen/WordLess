@@ -4,6 +4,11 @@ import useAuth from '../context/AuthContext';
 
 import './Login.css';
 
+/**
+ * Logout page that just sends a POST request to remove cookies and redirects back to index.
+ *
+ * @returns {*} JSX with a logout message or redirection
+ */
 export function LogoutPage() {
   const [authed, setAuthed] = useAuth();
 
@@ -24,6 +29,13 @@ export function LogoutPage() {
   return <h2>Logging out...</h2>;
 }
 
+/**
+ * Login form, sends a POST request for a JWT token on submit.
+ *
+ * Redirects to index if already authenticated.
+ *
+ * @returns {*} JSX for a login form
+ */
 export function LoginForm() {
   const [authed, setAuthed] = useAuth();
 
