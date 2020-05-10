@@ -1,17 +1,17 @@
-import React from 'react';
-import {useHistory} from 'react-router-dom';
+import React, {useState} from 'react';
+import {Redirect} from 'react-router-dom';
 import './SearchBar.css';
 
 export default function SearchBar() {
-  const history = useHistory();
+  const [query, setQuery] = useState(null);
 
   const onSubmit = async function (evt) {
     evt.preventDefault();
-
-    const query = evt.currentTarget.query.value;
-
-    history.push(`/search/?query=${query}`);
+    setQuery(evt.currentTarget.query.value);
   };
+
+  if (query)
+    return <Redirect to={`/search/?query=${query}`}/>;
 
   return <div id="search">
     <form onSubmit={onSubmit}>
