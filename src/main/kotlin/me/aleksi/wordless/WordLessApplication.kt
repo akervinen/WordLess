@@ -8,17 +8,21 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 import org.springframework.util.FileCopyUtils
 import java.io.InputStreamReader
+import javax.sql.DataSource
 import kotlin.text.Charsets.UTF_8
 
 /**
  * Blog application.
  */
 @SpringBootApplication
-class WordLessApplication constructor(private val jdbi: Jdbi, private val seeder: Seeder) : CommandLineRunner {
+class WordLessApplication constructor(private val jdbi: Jdbi, private val seeder: Seeder,
+                                      private val dataSource: DataSource) : CommandLineRunner {
     /**
      * Runs on startup, prints information and creates database schema and initial data.
      */
     override fun run(vararg args: String?) {
+        println("Database URL: ${dataSource.connection.metaData.url}")
+        println()
         println("Team: Spaghetti Forever")
         println("\tMember: Aleksi Kervinen")
         println()
